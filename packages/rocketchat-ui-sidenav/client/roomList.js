@@ -41,7 +41,6 @@ Template.roomList.helpers({
 		});
 		return user.settings.preferences.sidebarGroupByRole; 
 	},
-
 	list() {
 		return Session.get('rooms');
 	},
