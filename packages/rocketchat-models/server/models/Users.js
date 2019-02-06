@@ -220,7 +220,7 @@ export class Users extends Base {
 			],
 		};
 		// do not use cache
-		return this._db.find(query, options);
+		return this.find(query, options);
 	}
 
 	findByActiveUsersExcept(searchTerm, exceptions, options) {

@@ -36,6 +36,7 @@ Template.sortlist.helpers({
 
 Template.sortlist.events({
 	'change input'({ currentTarget }) {
+		console.log('change input');
 		const name = currentTarget.getAttribute('name');
 		let value = currentTarget.getAttribute('type') === 'checkbox' ? currentTarget.checked : currentTarget.value;
 
@@ -46,6 +47,19 @@ Template.sortlist.events({
 		Meteor.call('saveUserPreferences', {
 			[name] : value,
 		});
+		// TODO Maxicon
+		if (name !== 'sidebarGroupByRole' && value) {
+			Meteor.call('saveUserPreferences', {
+				sidebarGroupByRole : false,
+			});
+		}
+		if (name === 'sidebarGroupByRole' && value) {
+			Meteor.call('saveUserPreferences', {
+				sidebarGroupByType : false,
+				sidebarShowFavorites: false,
+				sidebarShowUnread: false,
+			});
+		}
 		popover.close();
 	},
 });

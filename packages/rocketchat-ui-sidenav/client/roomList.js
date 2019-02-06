@@ -33,6 +33,15 @@ Template.roomList.onCreated(function OnCreated() {
 
 Template.roomList.helpers({
 	/*	TODO Maxicon */
+	sidebarGroupByRole() {
+		const user = Users.findOne(Meteor.userId(), {
+			fields: {
+				'settings.preferences.sidebarGroupByRole': 1,
+			},
+		});
+		return user.settings.preferences.sidebarGroupByRole; 
+	},
+
 	list() {
 		return Session.get('rooms');
 	},
@@ -72,7 +81,6 @@ Template.roomList.helpers({
 			});
 			return chats;
 		} else {
-			console.log('view dont group');
 			if (sortBy === 'activity') {
 				sort.lm = -1;
 			} else { // alphabetical

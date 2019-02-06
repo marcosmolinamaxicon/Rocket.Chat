@@ -30,7 +30,6 @@ const getFromServer = (cb, type) => {
 		isLoading.set(false);
 
 		if (err) {
-			console.log(err);
 			return false;
 		}
 
@@ -38,7 +37,6 @@ const getFromServer = (cb, type) => {
 		const usersLength = results.users.length;
 		const roomsLength = results.rooms.length;
 		const notGroup = ['user', 'bot', 'guest', 'admin', 'livechat-agent', 'livechat-guest'];
-		console.log('filter');
 		for (let i = 0; i < roomsLength; i++) {
 			resultsFromServer.push({
 				_id: results.rooms[i]._id,
@@ -62,7 +60,6 @@ const getFromServer = (cb, type) => {
 			}
 			roles.sort();
 			for (let r = 0; r < roles.length; r++) {
-				console.log(roles[r]);
 				for (let i = 0; i < usersLength; i++) {
 					let role;
 					for (let ro = 0; ro < results.users[i].roles.length; ro++) {
