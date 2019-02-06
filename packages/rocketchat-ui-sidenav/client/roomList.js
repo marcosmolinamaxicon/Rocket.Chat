@@ -4,8 +4,38 @@ import { Template } from 'meteor/templating';
 import { ChatSubscription, Rooms, Users, Subscriptions } from 'meteor/rocketchat:models';
 import { UiTextContext, getUserPreference, roomTypes } from 'meteor/rocketchat:utils';
 import { settings } from 'meteor/rocketchat:settings';
+import { Session } from 'meteor/session';
+
+/*	TODO Maxicon */
+const getRooms = function(chats, callback) {
+	Meteor.call('loadroomlist', chats, (err, results) => {
+		callback(results);
+	});
+};
+/*	TODO Maxicon */
+Template.roomList.onCreated(function OnCreated() {
+	const user = RocketChat.models.Users.findOne(Meteor.userId(), {
+		fields: {
+			'settings.preferences.sidebarSortby': 1,
+			'settings.preferences.sidebarShowFavorites': 1,
+			'settings.preferences.sidebarShowUnread': 1,
+			'settings.preferences.sidebarGroupByRole': 1,
+			'services.tokenpass': 1,
+		},
+	});
+	if (RocketChat.getUserPreference(user, 'sidebarGroupByRole')) {
+		const chats = ChatSubscription.find({ open: true }).fetch();
+		Meteor.call('loadroomlist', chats, (err, results) => {
+			Session.set('rooms', results);
+		});
+	}
+});
 
 Template.roomList.helpers({
+	/*	TODO Maxicon */
+	list() {
+		return Session.get('rooms');
+	},
 	rooms() {
 		/*
 			modes:
@@ -23,6 +53,7 @@ Template.roomList.helpers({
 				'settings.preferences.sidebarSortby': 1,
 				'settings.preferences.sidebarShowFavorites': 1,
 				'settings.preferences.sidebarShowUnread': 1,
+				'settings.preferences.sidebarGroupByRole': 1,
 				'services.tokenpass': 1,
 			},
 		});
@@ -33,53 +64,64 @@ Template.roomList.helpers({
 		};
 
 		const sort = {};
-
-		if (sortBy === 'activity') {
-			sort.lm = -1;
-		} else { // alphabetical
-			sort[this.identifier === 'd' && settings.get('UI_Use_Real_Name') ? 'lowerCaseFName' : 'lowerCaseName'] = /descending/.test(sortBy) ? -1 : 1;
-		}
-
-		if (this.identifier === 'unread') {
-			query.alert = true;
-			query.hideUnreadStatus = { $ne: true };
-
-			return ChatSubscription.find(query, { sort });
-		}
-
-		const favoritesEnabled = !!(settings.get('Favorite_Rooms') && getUserPreference(user, 'sidebarShowFavorites'));
-
-		if (this.identifier === 'f') {
-			query.f = favoritesEnabled;
+		/*	TODO Maxicon */
+		if (RocketChat.getUserPreference(user, 'sidebarGroupByRole')) {
+			const chats = ChatSubscription.find({ open: true }).fetch();
+			getRooms(chats, function(data) {
+				Session.set('rooms', data);
+			});
+			return chats;
 		} else {
-			let types = [this.identifier];
-
-			if (this.identifier === 'merged') {
-				types = ['c', 'p', 'd'];
+			console.log('view dont group');
+			if (sortBy === 'activity') {
+				sort.lm = -1;
+			} else { // alphabetical
+				sort[this.identifier === 'd' && settings.get('UI_Use_Real_Name') ? 'lowerCaseFName' : 'lowerCaseName'] = /descending/.test(sortBy) ? -1 : 1;
 			}
 
-			if (this.identifier === 'unread' || this.identifier === 'tokens') {
-				types = ['c', 'p'];
+			if (this.identifier === 'unread') {
+				query.alert = true;
+				query.hideUnreadStatus = { $ne: true };
+
+				return ChatSubscription.find(query, { sort });
 			}
 
-			if (['c', 'p'].includes(this.identifier)) {
-				query.tokens = { $exists: false };
-			} else if (this.identifier === 'tokens' && user && user.services && user.services.tokenpass) {
-				query.tokens = { $exists: true };
-			}
+			const favoritesEnabled = !!(settings.get('Favorite_Rooms') && getUserPreference(user, 'sidebarShowFavorites'));
 
-			if (getUserPreference(user, 'sidebarShowUnread')) {
-				query.$or = [
-					{ alert: { $ne: true } },
-					{ hideUnreadStatus: true },
-				];
+			if (this.identifier === 'f') {
+				query.f = favoritesEnabled;
+			} else {
+				let types = [this.identifier];
+
+				if (this.identifier === 'merged') {
+					types = ['c', 'p', 'd'];
+				}
+
+				if (this.identifier === 'unread' || this.identifier === 'tokens') {
+					types = ['c', 'p'];
+				}
+
+				if (['c', 'p'].includes(this.identifier)) {
+					query.tokens = { $exists: false };
+				} else if (this.identifier === 'tokens' && user && user.services && user.services.tokenpass) {
+					query.tokens = { $exists: true };
+				}
+
+				if (getUserPreference(user, 'sidebarShowUnread')) {
+					query.$or = [
+						{ alert: { $ne: true } },
+						{ hideUnreadStatus: true },
+					];
+				}
+				query.t = { $in: types };
+				if (favoritesEnabled) {
+					query.f = { $ne: favoritesEnabled };
+				}
 			}
-			query.t = { $in: types };
-			if (favoritesEnabled) {
-				query.f = { $ne: favoritesEnabled };
-			}
+			const chats = ChatSubscription.find(query, { sort }).fetch();
+			Session.set('rooms', chats);
+			return chats;
 		}
-		return ChatSubscription.find(query, { sort });
 	},
 
 	isLivechat() {

@@ -27,7 +27,6 @@ const sortUsers = function(field, direction) {
 Meteor.methods({
 	browseChannels({ text = '', type = 'channels', sortBy = 'name', sortDirection = 'asc', page, offset, limit = 10 }) {
 		const regex = new RegExp(s.trim(s.escapeRegExp(text)), 'i');
-
 		if (!['channels', 'users'].includes(type)) {
 			return;
 		}
@@ -78,11 +77,27 @@ Meteor.methods({
 			};
 		}
 
-		// type === users
+		const sort = sortUsers(sortBy, sortDirection);
+		//	TODO Maxicon
+		if (RocketChat.authz.hasPermission(user._id, 'view-only-group')) {
+			return {
+				results: RocketChat.models.Users.findByActiveUsersGroupExcept(text, [user.username], {
+					...options,
+					sort,
+					fields: {
+						username: 1,
+						name: 1,
+						createdAt: 1,
+						emails: 1,
+					},
+				}).fetch(),
+				total: RocketChat.models.Users.findByActiveUsersGroupExcept(text, [user.username]).count(),
+			};
+		}
+
 		if (!RocketChat.authz.hasPermission(user._id, 'view-outside-room') || !RocketChat.authz.hasPermission(user._id, 'view-d-room')) {
 			return;
 		}
-		const sort = sortUsers(sortBy, sortDirection);
 		return {
 			results: RocketChat.models.Users.findByActiveUsersExcept(text, [user.username], {
 				...options,

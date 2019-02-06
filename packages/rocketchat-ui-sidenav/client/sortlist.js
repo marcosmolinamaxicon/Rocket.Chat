@@ -9,6 +9,10 @@ const checked = function(prop, field) {
 	if (prop === 'sidebarShowFavorites') {
 		return getUserPreference(userId, 'sidebarShowFavorites');
 	}
+	//	TODO Maxicon
+	if (prop === 'sidebarGroupByRole') {
+		return RocketChat.getUserPreference(userId, 'sidebarGroupByRole');
+	}
 	if (prop === 'sidebarGroupByType') {
 		return getUserPreference(userId, 'sidebarGroupByType');
 	}

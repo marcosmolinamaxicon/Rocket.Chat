@@ -191,6 +191,38 @@ export class Users extends Base {
 		return this.find(query, options);
 	}
 
+	//	TODO Maxicon
+	findByActiveUsersGroupExcept(searchTerm, rolesd, exceptions, options) {
+		if (exceptions == null) { exceptions = []; }
+		if (options == null) { options = {}; }
+		if (!_.isArray(exceptions)) {
+			exceptions = [exceptions];
+		}
+
+		const termRegex = new RegExp(s.escapeRegExp(searchTerm), 'i');
+
+		const orStmt = _.reduce(RocketChat.settings.get('Accounts_SearchFields').trim().split(','), function(acc, el) {
+			acc.push({ [el.trim()]: termRegex });
+			return acc;
+		}, []);
+		const query = {
+			$and: [
+				{
+					active: true,
+					$or: orStmt,
+				},
+				{
+					username: { $exists: true, $nin: exceptions },
+				},
+				{
+					roles: { $in: rolesd },
+				},
+			],
+		};
+		// do not use cache
+		return this._db.find(query, options);
+	}
+
 	findByActiveUsersExcept(searchTerm, exceptions, options) {
 		if (exceptions == null) { exceptions = []; }
 		if (options == null) { options = {}; }

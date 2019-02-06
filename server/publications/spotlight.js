@@ -14,6 +14,70 @@ function fetchRooms(userId, rooms) {
 }
 
 Meteor.methods({
+	/*	TODO Maxicon */
+	'getUserRoom'(name) {
+		return RocketChat.models.Users.findByUsername(name, { fields: { roles : 1 } }).fetch();
+	},
+	/*	TODO Maxicon */
+	loadroomlist(chats) {
+		const notGroup = ['user', 'bot', 'guest', 'admin', 'livechat-agent', 'livechat-guest'];
+		const roles = [];
+		for (let i = 0; i < chats.length; i++) {
+			if (chats[i].name) {
+				let usr = {};
+				const usrs = RocketChat.models.Users.findByUsername(chats[i].name, { fields: { roles : 1 } }).fetch();
+				if (usrs && usrs[0]) {
+					usr = usrs[0];
+				}
+				if (usr && usr.roles) {
+					chats[i].roles = usr.roles;
+					for (let r = 0; r < usr.roles.length; r++) {
+						if (!roles.includes(usr.roles[r]) && !notGroup.includes(usr.roles[r])) {
+							roles.push(usr.roles[r]);
+						}
+					}
+				}
+			}
+		}
+		roles.sort();
+		const rooms = [];
+		for (let i = 0; i < chats.length; i++) {
+			if (chats[i].t === 'c') {
+				rooms.push(chats[i]);
+			} else if (chats[i].rid && (!chats[i].roles || (chats[i].roles && chats[i].roles.length === 0))) {
+				rooms.push(chats[i]);
+			}
+		}
+
+
+		for (let r = 0; r < roles.length; r++) {
+			for (let i = 0; i < chats.length; i++) {
+				if (chats[i].roles) {
+					let role;
+					for (let ro = 0; ro < chats[i].roles.length; ro++) {
+						if (!notGroup.includes(chats[i].roles[ro])) {
+							role = chats[i].roles[ro];
+							break;
+						}
+					}
+					if (role === roles[r]) {
+						chats[i].role = roles[r];
+						rooms.push(chats[i]);
+					}
+				}
+			}
+		}
+
+		for (let i = 0; i < rooms.length; i++) {
+			let showGroup = false;
+			if (i === 0 || rooms[i].role !== rooms[i - 1].role) {
+				showGroup = true;
+			}
+			rooms[i].showGroup = showGroup;
+		}
+		return rooms;
+	},
+	/*	TODO Maxicon */
 	spotlight(text, usernames, type = { users: true, rooms: true }, rid) {
 		const searchForChannels = text[0] === '#';
 		const searchForDMs = text[0] === '@';
@@ -31,7 +95,7 @@ Meteor.methods({
 			rooms: [],
 		};
 		const roomOptions = {
-			limit: 5,
+			limit: 100,
 			fields: {
 				t: 1,
 				name: 1,
@@ -50,11 +114,12 @@ Meteor.methods({
 			return result;
 		}
 		const userOptions = {
-			limit: 5,
+			limit: 300,
 			fields: {
 				username: 1,
 				name: 1,
 				status: 1,
+				roles: 1,
 			},
 			sort: {},
 		};
@@ -63,6 +128,23 @@ Meteor.methods({
 		} else {
 			userOptions.sort.username = 1;
 		}
+		//	TODO Maxicon
+		if (RocketChat.authz.hasPermission(userId, 'view-only-group')
+			&& !RocketChat.authz.hasPermission(userId, 'view-outside-room')) {
+			const user = RocketChat.models.Users.find({ _id: userId }).fetch();
+			const roles = RocketChat.models.Roles.find({ public: true }).fetch();
+			const sRoles = user[0].roles;
+			if (roles) {
+				for (let r = 0; r < roles.length; r++) {
+					sRoles.push(roles[r].name);
+				}
+			}
+			roles.push(user[0].roles[0]);
+
+			result.users = RocketChat.models.Users.findByActiveUsersGroupExcept(text, user[0].roles, usernames, userOptions).fetch();
+			return result;
+		}
+
 
 		if (RocketChat.authz.hasPermission(userId, 'view-outside-room')) {
 			if (type.users === true && RocketChat.authz.hasPermission(userId, 'view-d-room')) {
