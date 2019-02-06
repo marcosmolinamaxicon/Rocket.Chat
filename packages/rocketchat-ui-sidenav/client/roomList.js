@@ -39,7 +39,7 @@ Template.roomList.helpers({
 				'settings.preferences.sidebarGroupByRole': 1,
 			},
 		});
-		return user.settings.preferences.sidebarGroupByRole; 
+		return user.settings.preferences.sidebarGroupByRole;
 	},
 	list() {
 		return Session.get('rooms');
