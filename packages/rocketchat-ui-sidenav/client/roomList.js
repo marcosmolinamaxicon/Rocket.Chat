@@ -72,20 +72,19 @@ Template.roomList.helpers({
 		};
 
 		const sort = {};
+		if (sortBy === 'activity') {
+			sort.lm = -1;
+		} else { // alphabetical
+			sort[this.identifier === 'd' && settings.get('UI_Use_Real_Name') ? 'lowerCaseFName' : 'lowerCaseName'] = /descending/.test(sortBy) ? -1 : 1;
+		}
 		/*	TODO Maxicon */
 		if (RocketChat.getUserPreference(user, 'sidebarGroupByRole')) {
-			const chats = ChatSubscription.find({ open: true }).fetch();
+			const chats = ChatSubscription.find({ open: true }, { sort }).fetch();
 			getRooms(chats, function(data) {
 				Session.set('rooms', data);
 			});
 			return chats;
 		} else {
-			if (sortBy === 'activity') {
-				sort.lm = -1;
-			} else { // alphabetical
-				sort[this.identifier === 'd' && settings.get('UI_Use_Real_Name') ? 'lowerCaseFName' : 'lowerCaseName'] = /descending/.test(sortBy) ? -1 : 1;
-			}
-
 			if (this.identifier === 'unread') {
 				query.alert = true;
 				query.hideUnreadStatus = { $ne: true };

@@ -48,12 +48,14 @@ Template.sortlist.events({
 			[name] : value,
 		});
 		// TODO Maxicon
-		if (name !== 'sidebarGroupByRole' && value) {
+		if (name === 'sidebarSortby') {
+			popover.close();
+			return;
+		} else if (name !== 'sidebarGroupByRole' && value) {
 			Meteor.call('saveUserPreferences', {
 				sidebarGroupByRole : false,
 			});
-		}
-		if (name === 'sidebarGroupByRole' && value) {
+		} else if (name === 'sidebarGroupByRole' && value) {
 			Meteor.call('saveUserPreferences', {
 				sidebarGroupByType : false,
 				sidebarShowFavorites: false,
