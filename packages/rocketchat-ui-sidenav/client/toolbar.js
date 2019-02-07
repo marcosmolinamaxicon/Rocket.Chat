@@ -37,8 +37,6 @@ const getFromServer = (cb, type) => {
 		const usersLength = results.users.length;
 		const roomsLength = results.rooms.length;
 		const notGroup = ['user', 'bot', 'guest', 'admin', 'livechat-agent', 'livechat-guest'];
-		
-		console.log('init capeta', new Date());
 		for (let i = 0; i < roomsLength; i++) {
 			resultsFromServer.push({
 				_id: results.rooms[i]._id,
@@ -114,7 +112,6 @@ const getFromServer = (cb, type) => {
 				});
 			}
 		}
-		console.log('end capeta', new Date());	
 		if (resultsFromServer.length) {
 			if (resultsFromClient) {
 				cb(resultsFromClient.concat(resultsFromServer));
@@ -216,7 +213,6 @@ Template.toolbar.helpers({
 				if (resultsFromClient.length < 20) {
 					getFromServerDebounced(cb, type);
 				} */
-				console.log('init metodo', new Date());
 				getFromServerDebounced(cb, type);
 			},
 
