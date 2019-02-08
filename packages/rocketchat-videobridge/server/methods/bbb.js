@@ -47,18 +47,19 @@ Meteor.methods({
 			meta_html5autosharewebcam: false,
 			meta_html5hidepresentation: true,
 		});
-
+		console.log('createUrl', createUrl);
 		const createResult = HTTP.get(createUrl);
 		const doc = parseString(createResult.content);
 
 		if (doc.response.returncode[0]) {
+			console.log('doc.response.returncode[0]');
 			const user = RocketChat.models.Users.findOneById(this.userId);
 
 			const hookApi = api.urlFor('hooks/create', {
 				meetingID,
 				callbackURL: Meteor.absoluteUrl(`api/v1/videoconference.bbb.update/${ meetingID }`),
 			});
-
+			console.log('hookApi', hookApi);
 			const hookResult = HTTP.get(hookApi);
 
 			if (hookResult.statusCode !== 200) {

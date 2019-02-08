@@ -62,7 +62,28 @@
 					<span class="rc-popover__item-text">{{_"Unread_on_top"}}</span>
 				</label>
 			</li>
-			
+		</ul>
+		<!-- TODO Maxicon -->
+		<span class="rc-popover__divider"></span>
+		<ul class="rc-popover__list">	
+			<li class="rc-popover__item">
+				<label class="rc-popover__label">
+					<input type="checkbox" name="hideOneDay" class="hidden">
+					<span class="rc-popover__icon">
+						{{> icon block="rc-popover__icon-element" icon='eye-off' }}
+					</span>
+					<span class="rc-popover__item-text">Esconder salas 1 dia</span>
+				</label>
+			</li>
+			<li class="rc-popover__item">
+				<label class="rc-popover__label">
+					<input type="checkbox" name="hideAll" class="hidden">
+					<span class="rc-popover__icon">
+						{{> icon block="rc-popover__icon-element" icon='eye-off' }}
+					</span>
+					<span class="rc-popover__item-text">Esconder todas as Salas</span>
+				</label>
+			</li>
 		</ul>
 	</div>
 </template>

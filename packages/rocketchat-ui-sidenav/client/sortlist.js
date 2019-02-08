@@ -3,6 +3,10 @@ import { Template } from 'meteor/templating';
 import { popover } from 'meteor/rocketchat:ui-utils';
 import { getUserPreference } from 'meteor/rocketchat:utils';
 import { settings } from 'meteor/rocketchat:settings';
+import { t } from 'meteor/rocketchat:utils';
+import { modal, call } from 'meteor/rocketchat:ui-utils';
+import { ChatSubscription } from 'meteor/rocketchat:models';
+import { Session } from 'meteor/session';
 
 const checked = function(prop, field) {
 	const userId = Meteor.userId();
@@ -36,9 +40,65 @@ Template.sortlist.helpers({
 
 Template.sortlist.events({
 	'change input'({ currentTarget }) {
-		console.log('change input');
 		const name = currentTarget.getAttribute('name');
 		let value = currentTarget.getAttribute('type') === 'checkbox' ? currentTarget.checked : currentTarget.value;
+		//  TODO Maxicon
+		if (name === 'hideOneDay') {
+			modal.open({
+				title: t('Are_you_sure'),
+				text: t('Hide_One_Day_Room'),
+				type: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#DD6B55',
+				confirmButtonText: t('Yes'),
+				cancelButtonText: t('Cancel'),
+				closeOnConfirm: true,
+				html: false,
+			}, async function() {
+				const data = new Date();
+				data.setHours(0, 0, 0);
+				const chats = ChatSubscription.find({ open: true, ls : { $lt: data } }, {}).fetch();
+				const rids = [];
+				for (let i = 0; i < chats.length; i++) {
+					rids.push(chats[i].rid);
+				}
+				console.log('rids', rids);
+				await call('hideRooms', rids);
+				for (let r = 0; r < rids.length; r++) {
+					if (rids[r] === Session.get('openedRoom')) {
+						Session.delete('openedRoom');
+					}
+				}
+			});
+			return;
+		}
+		//  TODO Maxicon
+		if (name === 'hideAll') {
+			modal.open({
+				title: t('Are_you_sure'),
+				text: t('Hide_All_Room'),
+				type: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#DD6B55',
+				confirmButtonText: t('Yes'),
+				cancelButtonText: t('Cancel'),
+				closeOnConfirm: true,
+				html: false,
+			}, async function() {
+				const chats = ChatSubscription.find({ open: true }, {}).fetch();
+				const rids = [];
+				for (let i = 0; i < chats.length; i++) {
+					rids.push(chats[i].rid);
+				}
+				await call('hideRooms', rids);
+				for (let r = 0; r < rids.length; r++) {
+					if (rids[r] === Session.get('openedRoom')) {
+						Session.delete('openedRoom');
+					}
+				}
+			});
+			return;
+		}
 
 		// TODO change mergeChannels to GroupByType
 		if (name === 'mergeChannels') {
