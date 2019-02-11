@@ -17,6 +17,10 @@ const checked = function(prop, field) {
 	if (prop === 'sidebarGroupByRole') {
 		return RocketChat.getUserPreference(userId, 'sidebarGroupByRole');
 	}
+	//	TODO Maxicon
+	if (prop === 'sidebarFindOnline') {
+		return RocketChat.getUserPreference(userId, 'sidebarFindOnline');
+	}
 	if (prop === 'sidebarGroupByType') {
 		return getUserPreference(userId, 'sidebarGroupByType');
 	}
@@ -100,6 +104,13 @@ Template.sortlist.events({
 			return;
 		}
 
+		//	TODO Maxicon
+		if (name === 'sidebarFindOnline') {
+			Meteor.call('saveUserPreferences', {
+				[name] : value,
+			});
+			return;
+		}
 		// TODO change mergeChannels to GroupByType
 		if (name === 'mergeChannels') {
 			value = !value;

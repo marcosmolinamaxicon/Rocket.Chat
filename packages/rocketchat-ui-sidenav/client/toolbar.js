@@ -5,7 +5,7 @@ import { FlowRouter } from 'meteor/kadira:flow-router';
 import { Session } from 'meteor/session';
 import { Template } from 'meteor/templating';
 import { TAPi18n } from 'meteor/tap:i18n';
-import { Rooms, Subscriptions } from 'meteor/rocketchat:models';
+import { Rooms, Subscriptions, Users } from 'meteor/rocketchat:models';
 import { roomTypes } from 'meteor/rocketchat:utils';
 import { hasAtLeastOnePermission } from 'meteor/rocketchat:authorization';
 import { menu } from 'meteor/rocketchat:ui-utils';
@@ -33,6 +33,7 @@ const getFromServer = (cb, type) => {
 			return false;
 		}
 
+		console.log('spotlight');
 		const resultsFromServer = [];
 		const usersLength = results.users.length;
 		const roomsLength = results.rooms.length;
