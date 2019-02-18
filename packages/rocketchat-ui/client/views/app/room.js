@@ -893,6 +893,11 @@ Template.room.onCreated(function() {
 		this.selectedMessages = [];
 		this.selectedRange = [];
 		this.selectablePointer = null;
+		$('.message').each(function(key, obj) {
+			if (obj.style && obj.style.background === 'green') {
+				obj.style.background = 'white';
+			}
+		});
 	};
 
 	this.selectMessages = (to) => {

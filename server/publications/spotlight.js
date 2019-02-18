@@ -15,6 +15,29 @@ function fetchRooms(userId, rooms) {
 
 Meteor.methods({
 	/*	TODO Maxicon */
+	'openSolic'(data) {
+		const userId = Meteor.userId();
+		if (!userId) {
+			throw new Meteor.Error('error-invalid-user', 'Invalid user', {
+				method: 'openSolic',
+			});
+		}
+		const room = Meteor.call('canAccessRoom', data.rid, userId);
+		if (!room) {
+			throw new Meteor.Error('error-invalid-room', 'Invalid room', {
+				method: 'openSolic',
+			});
+		}
+		if (!RocketChat.authz.hasPermission(userId, 'open-solic')) {
+			throw new Meteor.Error('error-action-not-allowed', 'Sem permissão para abrir solicitação', {
+				method: 'openSolic',
+				action: 'openSolic',
+			});
+		}
+
+		data.userId = userId;
+		return RocketChat.models.Solics.createOrUpdate(data);
+	},
 	'getUserRoom'(name) {
 		return RocketChat.models.Users.findByUsername(name, { fields: { roles : 1 } }).fetch();
 	},
@@ -42,7 +65,7 @@ Meteor.methods({
 		roles.sort();
 		const rooms = [];
 		for (let i = 0; i < chats.length; i++) {
-			if (chats[i].t === 'c') {
+			if (chats[i].t === 'c' || chats[i].t === 'p') {
 				rooms.push(chats[i]);
 			} else if (chats[i].rid && (!chats[i].roles || (chats[i].roles && chats[i].roles.length === 0))) {
 				rooms.push(chats[i]);
@@ -155,9 +178,13 @@ Meteor.methods({
 				const searchableRoomTypes = Object.entries(RocketChat.roomTypes.roomTypes)
 					.filter((roomType) => roomType[1].includeInRoomSearch())
 					.map((roomType) => roomType[0]);
-
 				const roomIds = RocketChat.models.Subscriptions.findByUserIdAndTypes(userId, searchableRoomTypes, { fields: { rid: 1 } }).fetch().map((s) => s.rid);
 				result.rooms = fetchRooms(userId, RocketChat.models.Rooms.findByNameAndTypesNotInIds(regex, searchableRoomTypes, roomIds, roomOptions).fetch());
+				const roomPIds = RocketChat.models.Subscriptions.findByUserIdAndTypes(userId, ['p'], { fields: { rid: 1 } }).fetch().map((s) => s.rid);
+				const roomsP = fetchRooms(userId, RocketChat.models.Rooms.findByIds(roomPIds, roomOptions).fetch());
+				for (let i = 0; i < roomsP.length; i++) {
+					result.rooms.push(roomsP[i]);
+				}
 			}
 		} else if (type.users === true && rid) {
 			const subscriptions = RocketChat.models.Subscriptions.find({

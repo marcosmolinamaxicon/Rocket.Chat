@@ -10,6 +10,7 @@ import {
 	UserDataFiles,
 	Users,
 	CustomSounds,
+	Solics,
 } from 'meteor/rocketchat:models';
 import { Base as _Base } from 'meteor/rocketchat:models';
 
@@ -26,4 +27,5 @@ Object.assign(RocketChat.models, {
 	UserDataFiles,
 	Users,
 	CustomSounds,
+	Solics,
 });
