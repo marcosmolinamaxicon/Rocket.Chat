@@ -15,6 +15,55 @@ function fetchRooms(userId, rooms) {
 
 Meteor.methods({
 	/*	TODO Maxicon */
+	'openSolic2'(data) {
+		const userId = Meteor.userId();
+		if (!userId) {
+			throw new Meteor.Error('error-invalid-user', 'Invalid user', {
+				method: 'openSolic',
+			});
+		}
+		const room = Meteor.call('canAccessRoom', data.rid, userId);
+		if (!room) {
+			throw new Meteor.Error('error-invalid-room', 'Invalid room', {
+				method: 'openSolic',
+			});
+		}
+		const clienteId = data.rid.replace(Meteor.user()._id, '');
+		const client = RocketChat.models.Users.find({ _id: clienteId }, { fields: { emails: 1, roles : 1 } }).fetch();
+		let empresa = null;
+		console.log(client[0].roles);
+		for (let i = 0; i < client[0].roles.length; i++) {
+			empresa = RocketChat.models.Roles.find({ _id: client[0].roles[i] }).fetch();
+		}
+	    let times = [];
+		let strMsgProblema = '';
+		for (let i = 0; i < data.messagesProblema.length; i++) {
+			const msgs = RocketChat.models.Messages.find({ _id: data.messagesProblema[i] }, { fields: { msg: 1, ts: 1 } }).fetch();
+			strMsgProblema += msgs[0].msg;
+			times.push(msgs[0].ts);
+			strMsgProblema += ' \n';
+		}
+
+		let strMsgSolucao = '';
+		for (let i = 0; i < data.messagesSolucao.length; i++) {
+			const msgs = RocketChat.models.Messages.find({ _id: data.messagesSolucao[i] }, { fields: { msg: 1, ts: 1 } }).fetch();
+			strMsgSolucao += msgs[0].msg;
+			times.push(msgs[0].ts);
+			strMsgSolucao += ' \n';
+		}
+		times = times.sort();
+
+		const result = {};
+		result.cliente = client[0];
+		result.room = room;
+		result.empresa = empresa[0];
+		result.msgProblema = strMsgProblema;
+		result.msgSolucao = strMsgSolucao;
+		result.dtInicio = times[0];
+		result.dtFim = times[times.length -1];
+
+		return result;
+	},
 	'openSolic'(data) {
 		const userId = Meteor.userId();
 		if (!userId) {

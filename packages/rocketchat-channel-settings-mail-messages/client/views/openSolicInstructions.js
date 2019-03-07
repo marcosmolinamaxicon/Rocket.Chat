@@ -14,6 +14,81 @@ const filterNames = (old) => {
 	return [...old.replace(' ', '').toLocaleLowerCase()].filter((f) => reg.test(f)).join('');
 };
 
+const formatData = (d) => `${ d.getDate() }/${ d.getMonth() + 1 }/${ d.getFullYear() } ${ d.getHours() } :  ${ d.getMinutes() }`;
+
+const convertUnicode = (filtro) => {
+	let result = '';
+	for (let i = 0; i < filtro.length; i++) {
+		switch (filtro[i]) {
+			case 'À': result += '%C0'; break;
+			case 'Á': result += '%C1'; break;
+			case 'Â': result += '%C2'; break;
+			case 'Ã': result += '%C3'; break;
+			case 'Ä': result += '%C4'; break;
+			case 'Å': result += '%C5'; break;
+			case 'Æ': result += '%C6'; break;
+			case 'Ç': result += '%C7'; break;
+			case 'È': result += '%C8'; break;
+			case 'É': result += '%C9'; break;
+			case 'Ê': result += '%CA'; break;
+			case 'Ë': result += '%CB'; break;
+			case 'Ì': result += '%CC'; break;
+			case 'Í': result += '%CD'; break;
+			case 'Î': result += '%CE'; break;
+			case 'Ï': result += '%CF'; break;
+			case 'Ð': result += '%D0'; break;
+			case 'Ñ': result += '%D1'; break;
+			case 'Ò': result += '%D2'; break;
+			case 'Ó': result += '%D3'; break;
+			case 'Ô': result += '%D4'; break;
+			case 'Õ': result += '%D5'; break;
+			case 'Ö': result += '%D6'; break;
+			case 'Ø': result += '%D8'; break;
+			case 'Ù': result += '%D9'; break;
+			case 'Ú': result += '%DA'; break;
+			case 'Û': result += '%DB'; break;
+			case 'Ü': result += '%DC'; break;
+			case 'Ý': result += '%DD'; break;
+			case 'Þ': result += '%DE'; break;
+			case 'ß': result += '%DF'; break;
+			case 'à': result += '%E0'; break;
+			case 'á': result += '%E1'; break;
+			case 'â': result += '%E2'; break;
+			case 'ã': result += '%E3'; break;
+			case 'ä': result += '%E4'; break;
+			case 'å': result += '%E5'; break;
+			case 'æ': result += '%E6'; break;
+			case 'ç': result += '%E7'; break;
+			case 'è': result += '%E8'; break;
+			case 'é': result += '%E9'; break;
+			case 'ê': result += '%EA'; break;
+			case 'ë': result += '%EB'; break;
+			case 'ì': result += '%EC'; break;
+			case 'í': result += '%ED'; break;
+			case 'î': result += '%EE'; break;
+			case 'ï': result += '%EF'; break;
+			case 'ð': result += '%F0'; break;
+			case 'ñ': result += '%F1'; break;
+			case 'ò': result += '%F2'; break;
+			case 'ó': result += '%F3'; break;
+			case 'ô': result += '%F4'; break;
+			case 'õ': result += '%F5'; break;
+			case 'ö': result += '%F6'; break;
+			case '÷': result += '%F7'; break;
+			case 'ø': result += '%F8'; break;
+			case 'ù': result += '%F9'; break;
+			case 'ú': result += '%FA'; break;
+			case 'û': result += '%FB'; break;
+			case 'ü': result += '%FC'; break;
+			case 'ý': result += '%FD'; break;
+			case 'þ': result += '%FE'; break;
+			case 'ÿ': result += '%FF'; break;
+			default: result += filtro[i];
+		}
+	}
+	return result;
+};
+
 Template.openSolicInstructions.helpers({
 	name() {
 		return Meteor.user().name;
@@ -93,14 +168,24 @@ Template.openSolicInstructions.events({
 			language: localStorage.getItem('userLanguage'),
 		};
 
-		Meteor.call('openSolic', data, function(err, result) {
+
+
+		Meteor.call('openSolic2', data, function(err, result) {
 			if (err != null) {
 				return handleError(err);
 			}
 			toastr.success(t('Você sera redirecionado '));
-			window.open("http://192.168.181.123:4200/#/solic/"+result,'_blank');
-
-			//instance.reset(true);
+			let filtro = '';
+			filtro += `i_cd_empresa=${ result.empresa.cdEmpresa }`;
+			filtro += `&i_email_usuario=${ result.cliente.emails[0].address }`;
+			filtro += '&i_tp_solic=C';
+			filtro += `&i_ds_problema=${ convertUnicode(result.msgProblema) }`;
+			filtro += `&i_ds_solucao=${ convertUnicode(result.msgSolucao) }`;
+			filtro += `&i_dt_inicio=${ formatData(result.dtInicio) }`;
+			filtro += `&i_dt_fim=${ formatData(result.dtFim) }`;
+			filtro += `&i_ds_assunto=${ convertUnicode(subject) }`;
+			window.open(`https://sds.maxiconsystems.com.br/pls/maxicon/sup003?${ filtro }`, '_blank');
+			//   instance.reset(true);
 		});
 	},
 	'click .rc-input--usernames .rc-tags__tag'({ target }, t) {
