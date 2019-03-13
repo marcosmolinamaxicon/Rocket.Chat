@@ -129,6 +129,7 @@ Template.header.helpers({
 	isSection() {
 		return Template.instance().data.sectionName != null;
 	},
+
 });
 
 Template.header.events({
@@ -136,6 +137,13 @@ Template.header.events({
 		fireGlobalEvent('click-toolbar-button', { id: this.id });
 		e.currentTarget.querySelector('button').blur();
 		return false;
+	},
+
+	'click .rc-header__alterCss'() {
+		Meteor.call('saveUserPreferences', {
+			viewCssSkype : !Meteor.user().settings.preferences.viewCssSkype,
+		});
+		location.reload();
 	},
 
 	'click .rc-header__toggle-favorite'(event) {

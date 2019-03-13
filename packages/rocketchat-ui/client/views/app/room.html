@@ -6,6 +6,35 @@
 			</div>
 		</div>
 		<div class="main-content-flex">
+			
+				{{#if ccsSkype}}
+		<style>
+			li.message.own{
+				text-align: right;
+				padding-right: 90px !important; 
+			}
+			li.message.own button.thumb{
+				right: 50px;
+				left: unset;
+			}
+			.message.new-day::before {
+				visibility: collapse;
+			}
+			.message{
+				margin-top: 20px
+			}
+			.message.new-day::after{
+				border: none;
+			}
+			.message.new-day{
+				margin-top: 5px;
+			}
+			li.message.background-transparent-dark-hover.own button.thumb{
+				left: unset;
+			}
+		
+			</style>
+		{{/if}}
 			<section class="messages-container flex-tab-main-content {{adminClass}}" id="{{windowId}}" aria-label="{{_ "Channel"}}">
 				{{# unless embeddedVersion}}
 					{{# header}}

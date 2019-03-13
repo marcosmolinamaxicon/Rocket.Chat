@@ -377,6 +377,18 @@ Template.message.helpers({
 	isSnippet() {
 		return this.actionContext === 'snippeted';
 	},
+	isUserLogged(user) {
+		console.log('teste', user);
+		return Meteor.user().username === user;
+	},
+	// TODO Maxicon
+	ccsUserLogged(user) {
+		return Meteor.user().username === user ? 'color: red' : 'color: blue';
+	},
+	// TODO Maxicon
+	ccsSkype() {
+		return Meteor.user().settings.preferences.viewCssSkype;
+	},
 });
 
 

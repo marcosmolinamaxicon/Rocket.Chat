@@ -485,6 +485,10 @@ Template.room.helpers({
 
 		return moment.duration(roomMaxAge(Session.get(`roomData${ this._id }`)) * 1000 * 60 * 60 * 24).humanize();
 	},
+	// TODO Maxicon
+	ccsSkype() {
+		return Meteor.user().settings.preferences.viewCssSkype;
+	},
 });
 
 let isSocialSharingOpen = false;

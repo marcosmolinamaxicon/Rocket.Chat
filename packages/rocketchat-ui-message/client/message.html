@@ -1,4 +1,32 @@
 <template name="message">
+	<!--{{#if ccsSkype}}
+		<style>
+			li.message.own{
+				text-align: right;
+				padding-right: 90px !important; 
+			}
+			li.message.own button.thumb{
+				right: 50px;
+				left: unset;
+			}
+			.message.new-day::before {
+				visibility: collapse;
+			}
+			.message{
+				margin-top: 20px
+			}
+			.message.new-day::after{
+				border: none;
+			}
+			.message.new-day{
+				margin-top: 5px;
+			}
+			li.message.background-transparent-dark-hover.own button.thumb{
+				left: unset;
+			}
+		</style>
+		{{/if}}-->	
+
 	<li id="{{_id}}" data-context={{actionContext}} class="message background-transparent-dark-hover {{ignoredClass}} {{sequentialClass}} {{system}} {{t}} {{own}} {{isTemp}} {{chatops}} {{customClass}}" data-username="{{u.username}}" data-groupable="{{isGroupable}}" data-date="{{date}}" data-timestamp="{{timestamp}}">
 		{{#if avatar}}
 			{{#if avatarFromUsername}}

@@ -36,6 +36,7 @@ Meteor.methods({
 			sidebarHideAvatar: Match.Optional(Boolean),
 			sidebarGroupByType: Match.Optional(Boolean),
 			muteFocusedConversations: Match.Optional(Boolean),
+			saveUserPreferences:  Match.Optional(Boolean),
 		};
 		check(settings, Match.ObjectIncluding(keys));
 		const user = Meteor.user();
