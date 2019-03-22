@@ -184,7 +184,11 @@ Template.openSolicInstructions.events({
 			filtro += `&i_dt_inicio=${ formatData(result.dtInicio) }`;
 			filtro += `&i_dt_fim=${ formatData(result.dtFim) }`;
 			filtro += `&i_ds_assunto=${ convertUnicode(subject) }`;
-			window.open(`https://sds.maxiconsystems.com.br/pls/maxicon/sup003?${ filtro }`, '_blank');
+			console.log('redirecti');
+			const a = document.getElementById('teste');
+			a.href = `https://sds.maxiconsystems.com.br/pls/maxicon/sup003?${ filtro }`;
+			a.click();
+			//   window.open(`https://sds.maxiconsystems.com.br/pls/maxicon/sup003?${ filtro }`, '_blank', 'noopener,noreferrer');
 			//   instance.reset(true);
 		});
 	},

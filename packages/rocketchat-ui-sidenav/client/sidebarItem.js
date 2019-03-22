@@ -39,8 +39,12 @@ Template.sidebarItem.helpers({
 	roles() {
 		return this.role;
 	},
+	// TODO maxicon
 	showGroup() {
 		return this.showGroup;
+	},
+	isGroup() {
+		return this.t !== 'd';
 	},
 });
 
