@@ -88,6 +88,11 @@ RocketChat.sendMessage = function(user, message, room, upsert = false) {
 		return false;
 	}
 
+	//  TODO Maxicon
+	if (room.t !== 'd') {
+		message.msg = `@all ${ message.msg }`;
+	}
+
 	check(message, objectMaybeIncluding({
 		_id: String,
 		msg: String,

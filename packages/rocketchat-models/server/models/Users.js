@@ -219,16 +219,19 @@ export class Users extends Base {
 				},
 			],
 		};
+
+		if (!searchTerm) {
 		// TODO Maxicon
-		const user = this._db.find(Meteor.userId(), {
-			fields: {
-				'settings.preferences.sidebarFindOnline': 1,
-			},
-		}).fetch();
-		if (user[0] && user[0].settings && user[0].settings.preferences && user[0].settings.preferences.sidebarFindOnline) {
-			query.$and.push({ status: {
-				$ne: 'offline' },
-			});
+			const user = this._db.find(Meteor.userId(), {
+				fields: {
+					'settings.preferences.sidebarFindOnline': 1,
+				},
+			}).fetch();
+			if (user[0] && user[0].settings && user[0].settings.preferences && user[0].settings.preferences.sidebarFindOnline) {
+				query.$and.push({ status: {
+					$ne: 'offline' },
+				});
+			}
 		}
 		// do not use cache
 		return this.find(query, options);

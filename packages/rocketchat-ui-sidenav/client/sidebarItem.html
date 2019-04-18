@@ -64,11 +64,6 @@
 							<span class="badge badge--unread">{{#if userMentions}}@ {{/if}}{{unread}}
 								 </span>
 						{{/if}}
-						{{#if alert}}
-							 {{#if isGroup}}
-								<span class="badge badge--unread"> #  </span>
-							{{/if}}
-						{{/if}}
 					</div>
 				</div>
 				{{/let}}
@@ -81,4 +76,7 @@
 			</div>
 		</a>
 	</li>
+	{{#if showLoadMore}}
+		<div style="color: white; padding-left: 30px">	carregar </div>
+	{{/if}}
 </template>

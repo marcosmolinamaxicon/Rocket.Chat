@@ -21,6 +21,7 @@ const isLoading = new ReactiveVar(false);
 const getFromServer = (cb, type) => {
 	isLoading.set(true);
 	const currentFilter = filterText;
+	console.log('chamou ', new Date());
 	//	TODO Maxicon
 	Meteor.call('spotlight', currentFilter, usernamesFromClient, type, (err, results) => {
 		if (currentFilter !== filterText) {
@@ -113,6 +114,9 @@ const getFromServer = (cb, type) => {
 				});
 			}
 		}
+		if (usersLength === 30) {
+			resultsFromServer[resultsFromServer.length - 1].showLoadMore = true;
+		}
 		if (resultsFromServer.length) {
 			if (resultsFromClient) {
 				cb(resultsFromClient.concat(resultsFromServer));
@@ -120,13 +124,15 @@ const getFromServer = (cb, type) => {
 				cb(resultsFromServer);
 			}
 		}
+		console.log('encerrou ', new Date());
 	});
 };
 
-const getFromServerDebounced = _.debounce(getFromServer, 500);
+const getFromServerDebounced = _.debounce(getFromServer, 800);
 
 Template.toolbar.helpers({
 	results() {
+		console.log('GETrESULT ', new Date());
 		return Template.instance().resultsList.get();
 	},
 	getPlaceholder() {

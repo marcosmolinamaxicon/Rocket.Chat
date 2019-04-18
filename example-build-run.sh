@@ -21,8 +21,8 @@ set -e
 meteor build --server-only --directory $DEPLOY_DIR
 
 ### RUN
-cd $DEPLOY_DIR/bundle/programs/server
-npm install
+#cd $DEPLOY_DIR/bundle/programs/server
+#npm install
 
 cd $DEPLOY_DIR/bundle
 NODE_ENV=production \
@@ -31,3 +31,9 @@ ROOT_URL=http://localhost:3000 \
 MONGO_URL=mongodb://192.168.180.144:27017/rocketchat \
 #MONGO_OPLOG_URL=mongodb://localhost:27017/local \
 #node main.js
+cd ..
+mv bundle /home/maxicon/rocket.build/
+export DOCKER_HOST=192.168.180.127:2375
+cd /home/maxicon/rocket.build/
+docker build -f Dockerfile -t rocket.chat.maxicon:0.0.33 .
+rm -rf bundle

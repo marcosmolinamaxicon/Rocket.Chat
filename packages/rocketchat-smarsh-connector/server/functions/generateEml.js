@@ -16,7 +16,7 @@ const closetd = '</td>';
 function _getLink(attachment) {
 	const url = attachment.title_link.replace(/ /g, '%20');
 
-	if (Meteor.settings.public.sandstorm || url.match(/^(https?:)?\/\//i)) {
+	if (Meteor.settings.public.sandstorm ||(url && url.match(/^(https?:)?\/\//i))) {
 		return url;
 	} else {
 		return Meteor.absoluteUrl().replace(/\/$/, '') + __meteor_runtime_config__.ROOT_URL_PATH_PREFIX + url;
