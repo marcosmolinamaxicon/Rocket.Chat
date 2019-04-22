@@ -32,6 +32,16 @@ Template.sidebarItem.helpers({
 	isLivechatQueue() {
 		return this.pathSection === 'livechat-queue';
 	},
+	// TODO maxicon
+	roles() {
+		return this.role;
+	},
+	showGroup() {
+		return this.showGroup;
+	},
+	isGroup() {
+		return this.t !== 'd';
+	},
 	showUnread() {
 		return this.unread > 0 || (!this.hideUnreadStatus && this.alert);
 	},

@@ -502,9 +502,69 @@ export class Users extends Base {
 				...extraQuery,
 			],
 		};
+		// TODO Maxicon
+		if (!searchTerm) {
+			const user = this._db.find(Meteor.userId(), {
+				fields: {
+					'settings.preferences.sidebarFindOnline': 1,
+				},
+			}).fetch();
+			if (user[0] && user[0].settings && user[0].settings.preferences && user[0].settings.preferences.sidebarFindOnline) {
+				query.$and.push({ status: {
+					$ne: 'offline' },
+				});
+			}
+		}
+
 
 		// do not use cache
 		return this._db.find(query, options);
+	}
+
+	//	TODO Maxicon
+	findByActiveUsersGroupExcept(searchTerm, rolesd, exceptions, options) {
+		if (exceptions == null) { exceptions = []; }
+		if (options == null) { options = {}; }
+		if (!_.isArray(exceptions)) {
+			exceptions = [exceptions];
+		}
+
+		const termRegex = new RegExp(s.escapeRegExp(searchTerm), 'i');
+
+		const orStmt = _.reduce(RocketChat.settings.get('Accounts_SearchFields').trim().split(','), function(acc, el) {
+			acc.push({ [el.trim()]: termRegex });
+			return acc;
+		}, []);
+		const query = {
+			$and: [
+				{
+					active: true,
+					$or: orStmt,
+				},
+				{
+					username: { $exists: true, $nin: exceptions },
+				},
+				{
+					roles: { $in: rolesd },
+				},
+			],
+		};
+
+		if (!searchTerm) {
+		// TODO Maxicon
+			const user = this._db.find(Meteor.userId(), {
+				fields: {
+					'settings.preferences.sidebarFindOnline': 1,
+				},
+			}).fetch();
+			if (user[0] && user[0].settings && user[0].settings.preferences && user[0].settings.preferences.sidebarFindOnline) {
+				query.$and.push({ status: {
+					$ne: 'offline' },
+				});
+			}
+		}
+		// do not use cache
+		return this.find(query, options);
 	}
 
 	findByActiveLocalUsersExcept(searchTerm, exceptions, options, forcedSearchFields, localPeer) {

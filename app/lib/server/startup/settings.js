@@ -324,6 +324,12 @@ settings.addGroup('Accounts', function() {
 			public: true,
 			i18nLabel: 'Group_by_Type',
 		});
+		//	TODO Maxicon
+		this.add('Accounts_Default_User_Preferences_sidebarGroupByrole', true, {
+			type: 'boolean',
+			public: true,
+			i18nLabel: 'Group_by_Role',
+		});
 		this.add('Accounts_Default_User_Preferences_sidebarViewMode', 'medium', {
 			type: 'select',
 			values: [

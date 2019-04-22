@@ -5,7 +5,45 @@ import { ChatSubscription, Rooms, Users, Subscriptions } from '../../models';
 import { UiTextContext, getUserPreference, roomTypes } from '../../utils';
 import { settings } from '../../settings';
 
+/*	TODO Maxicon */
+const getRooms = function(chats, callback) {
+	Meteor.call('loadroomlist', chats, (err, results) => {
+		callback(results);
+	});
+};
+/*	TODO Maxicon */
+Template.roomList.onCreated(function OnCreated() {
+	const user = RocketChat.models.Users.findOne(Meteor.userId(), {
+		fields: {
+			'settings.preferences.sidebarSortby': 1,
+			'settings.preferences.sidebarShowFavorites': 1,
+			'settings.preferences.sidebarShowUnread': 1,
+			'settings.preferences.sidebarGroupByRole': 1,
+			'services.tokenpass': 1,
+		},
+	});
+	if (RocketChat.getUserPreference(user, 'sidebarGroupByRole')) {
+		const chats = ChatSubscription.find({ open: true }).fetch();
+		Meteor.call('loadroomlist', chats, (err, results) => {
+			Session.set('rooms', results);
+		});
+	}
+});
+
+
 Template.roomList.helpers({
+	/*	TODO Maxicon */
+	sidebarGroupByRole() {
+		const user = Users.findOne(Meteor.userId(), {
+			fields: {
+				'settings.preferences.sidebarGroupByRole': 1,
+			},
+		});
+		return user.settings.preferences.sidebarGroupByRole;
+	},
+	list() {
+		return Session.get('rooms');
+	},
 	rooms() {
 		/*
 			modes:
@@ -24,6 +62,7 @@ Template.roomList.helpers({
 				'settings.preferences.sidebarShowFavorites': 1,
 				'settings.preferences.sidebarShowUnread': 1,
 				'settings.preferences.sidebarShowDiscussion': 1,
+				'settings.preferences.sidebarGroupByRole': 1, // TODO Maxicon
 				'services.tokenpass': 1,
 			},
 		});
@@ -40,62 +79,70 @@ Template.roomList.helpers({
 		} else { // alphabetical
 			sort[this.identifier === 'd' && settings.get('UI_Use_Real_Name') ? 'lowerCaseFName' : 'lowerCaseName'] = /descending/.test(sortBy) ? -1 : 1;
 		}
-
-		if (this.identifier === 'unread') {
-			query.alert = true;
-			query.$or = [
-				{ hideUnreadStatus: { $ne: true } },
-				{ unread: { $gt: 0 } },
-			];
-
-			return ChatSubscription.find(query, { sort });
-		}
-
-		const favoritesEnabled = !!(settings.get('Favorite_Rooms') && getUserPreference(user, 'sidebarShowFavorites'));
-
-		if (this.identifier === 'f') {
-			query.f = favoritesEnabled;
+		/*	TODO Maxicon */
+		if (RocketChat.getUserPreference(user, 'sidebarGroupByRole')) {
+			const chats = ChatSubscription.find({ open: true }, { sort }).fetch();
+			getRooms(chats, function(data) {
+				Session.set('rooms', data);
+			});
+			return chats;
 		} else {
-			let types = [this.identifier];
-
-			if (this.identifier === 'merged') {
-				types = ['c', 'p', 'd'];
-			}
-
-			if (this.identifier === 'discussion') {
-				types = ['c', 'p', 'd'];
-				query.prid = { $exists: true };
-			}
-
-			if (this.identifier === 'tokens') {
-				types = ['c', 'p'];
-			}
-
-			if (['c', 'p'].includes(this.identifier)) {
-				query.tokens = { $exists: false };
-			} else if (this.identifier === 'tokens' && user && user.services && user.services.tokenpass) {
-				query.tokens = { $exists: true };
-			}
-
-			// if we display discussions as a separate group, we should hide them from the other lists
-			if (getUserPreference(user, 'sidebarShowDiscussion')) {
-				query.prid = { $exists: false };
-			}
-
-			if (getUserPreference(user, 'sidebarShowUnread')) {
+			if (this.identifier === 'unread') {
+				query.alert = true;
 				query.$or = [
-					{ alert: { $ne: true } },
-					{
-						$and: [
-							{ hideUnreadStatus: true },
-							{ unread: 0 },
-						],
-					},
+					{ hideUnreadStatus: { $ne: true } },
+					{ unread: { $gt: 0 } },
 				];
+
+				return ChatSubscription.find(query, { sort });
 			}
-			query.t = { $in: types };
-			if (favoritesEnabled) {
-				query.f = { $ne: favoritesEnabled };
+
+			const favoritesEnabled = !!(settings.get('Favorite_Rooms') && getUserPreference(user, 'sidebarShowFavorites'));
+
+			if (this.identifier === 'f') {
+				query.f = favoritesEnabled;
+			} else {
+				let types = [this.identifier];
+
+				if (this.identifier === 'merged') {
+					types = ['c', 'p', 'd'];
+				}
+
+				if (this.identifier === 'discussion') {
+					types = ['c', 'p', 'd'];
+					query.prid = { $exists: true };
+				}
+
+				if (this.identifier === 'tokens') {
+					types = ['c', 'p'];
+				}
+
+				if (['c', 'p'].includes(this.identifier)) {
+					query.tokens = { $exists: false };
+				} else if (this.identifier === 'tokens' && user && user.services && user.services.tokenpass) {
+					query.tokens = { $exists: true };
+				}
+
+				// if we display discussions as a separate group, we should hide them from the other lists
+				if (getUserPreference(user, 'sidebarShowDiscussion')) {
+					query.prid = { $exists: false };
+				}
+
+				if (getUserPreference(user, 'sidebarShowUnread')) {
+					query.$or = [
+						{ alert: { $ne: true } },
+						{
+							$and: [
+								{ hideUnreadStatus: true },
+								{ unread: 0 },
+							],
+						},
+					];
+				}
+				query.t = { $in: types };
+				if (favoritesEnabled) {
+					query.f = { $ne: favoritesEnabled };
+				}
 			}
 		}
 		return ChatSubscription.find(query, { sort });

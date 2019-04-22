@@ -22,6 +22,7 @@ const getFromServer = (cb, type) => {
 	isLoading.set(true);
 	const currentFilter = filterText;
 
+	//	TODO Maxicon
 	Meteor.call('spotlight', currentFilter, usernamesFromClient, type, (err, results) => {
 		if (currentFilter !== filterText) {
 			return;
@@ -30,28 +31,74 @@ const getFromServer = (cb, type) => {
 		isLoading.set(false);
 
 		if (err) {
-			console.log(err);
 			return false;
 		}
 
+		console.log('spotlight');
 		const resultsFromServer = [];
 		const usersLength = results.users.length;
 		const roomsLength = results.rooms.length;
+		const notGroup = ['user', 'bot', 'guest', 'admin', 'livechat-agent', 'livechat-guest'];
+		for (let i = 0; i < roomsLength; i++) {
+			resultsFromServer.push({
+				_id: results.rooms[i]._id,
+				t:  results.rooms[i].t,
+				name: results.rooms[i].name,
+				fname: results.rooms[i].name,
+				roles: [],
+				role: undefined,
+			});
 
+		}
 		if (usersLength) {
+			const roles = [];
 			for (let i = 0; i < usersLength; i++) {
-				resultsFromServer.push({
-					_id: results.users[i]._id,
-					t: 'd',
-					name: results.users[i].username,
-					fname: results.users[i].name,
-				});
+				const user = results.users[i];
+				for (let r = 0; r < user.roles.length; r++) {
+					if (!roles.includes(user.roles[r]) && !notGroup.includes(user.roles[r])) {
+						roles.push(user.roles[r]);
+					}
+				}
+			}
+			roles.sort();
+			for (let r = 0; r < roles.length; r++) {
+				for (let i = 0; i < usersLength; i++) {
+					let role;
+					for (let ro = 0; ro < results.users[i].roles.length; ro++) {
+						if (!notGroup.includes(results.users[i].roles[ro])) {
+							role = results.users[i].roles[ro];
+							break;
+						}
+					}
+					if (role === roles[r]) {
+						resultsFromServer.push({
+							_id: results.users[i]._id,
+							t: 'd',
+							name: results.users[i].username,
+							fname: results.users[i].name,
+							roles: results.users[i].roles,
+							role: roles[r],
+						});
+					}
+				}
+			}
+
+			for (let i = 0; i < resultsFromServer.length; i++) {
+				let showGroup;
+				if (!resultsFromServer[i].role) {
+					showGroup = false;
+				} else if (i === 0 || resultsFromServer[i].role !== resultsFromServer[i - 1].role) {
+					showGroup = true;
+				}
+				resultsFromServer[i].showGroup = showGroup;
 			}
 		}
-
 		if (roomsLength) {
 			for (let i = 0; i < roomsLength; i++) {
-				const alreadyOnClient = resultsFromClient.find((item) => item._id === results.rooms[i]._id);
+				let alreadyOnClient = true;
+				if (resultsFromClient) {
+					alreadyOnClient = resultsFromClient.find((item) => item._id === results.rooms[i]._id);
+				}
 				if (alreadyOnClient) {
 					continue;
 				}
@@ -61,13 +108,23 @@ const getFromServer = (cb, type) => {
 					t: results.rooms[i].t,
 					name: results.rooms[i].name,
 					lastMessage: results.rooms[i].lastMessage,
+					roles : [],
+					role: '',
+					showGroup: false,
 				});
 			}
 		}
-
-		if (resultsFromServer.length) {
-			cb(resultsFromClient.concat(resultsFromServer));
+		if (usersLength === 30) {
+			resultsFromServer[resultsFromServer.length - 1].showLoadMore = true;
 		}
+		if (resultsFromServer.length) {
+			if (resultsFromClient) {
+				cb(resultsFromClient.concat(resultsFromServer));
+			} else {
+				cb(resultsFromServer);
+			}
+		}
+		console.log('encerrou ', new Date());
 	});
 };
 
