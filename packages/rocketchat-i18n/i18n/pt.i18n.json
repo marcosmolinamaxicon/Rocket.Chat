@@ -2094,10 +2094,7 @@
   "No_snippet_messages": "Sem trecho",
   "No_starred_messages": "Não há mensagens favoritas",
   "No_such_command": "Nenhum comando desse tipo: `/ __command__`",
-<<<<<<< HEAD
-=======
   "No_discussions_yet": "Ainda sem conversas",
->>>>>>> upstream/develop
   "No_user_with_username_%s_was_found": "Nenhum utilizador com nome de utilizador<strong>\"%s\"</strong> foi encontrado!",
   "Nobody_available": "Ninguém disponível",
   "Node_version": "Versão do Nó",

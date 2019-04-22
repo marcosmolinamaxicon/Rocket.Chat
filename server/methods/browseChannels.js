@@ -84,7 +84,6 @@ Meteor.methods({
 			};
 		}
 
-<<<<<<< HEAD
 		const sort = sortUsers(sortBy, sortDirection);
 		//	TODO Maxicon
 		if (RocketChat.authz.hasPermission(user._id, 'view-only-group')) {
@@ -106,7 +105,6 @@ Meteor.methods({
 		if (!RocketChat.authz.hasPermission(user._id, 'view-outside-room') || !RocketChat.authz.hasPermission(user._id, 'view-d-room')) {
 			return;
 		}
-=======
 		// type === users
 		if (!hasPermission(user._id, 'view-outside-room') || !hasPermission(user._id, 'view-d-room')) {
 			return;
@@ -162,7 +160,6 @@ Meteor.methods({
 			}
 		}
 
->>>>>>> upstream/develop
 		return {
 			total,
 			results,
