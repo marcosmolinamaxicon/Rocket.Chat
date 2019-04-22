@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
+import { Subscriptions } from '../../app/models';
 
 Meteor.methods({
 	//	TODO maxicon
@@ -26,6 +27,6 @@ Meteor.methods({
 			});
 		}
 
-		return RocketChat.models.Subscriptions.hideByRoomIdAndUserId(rid, Meteor.userId());
+		return Subscriptions.hideByRoomIdAndUserId(rid, Meteor.userId());
 	},
 });
