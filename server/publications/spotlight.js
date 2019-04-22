@@ -231,7 +231,6 @@ Meteor.methods({
 				const searchableRoomTypes = Object.entries(roomTypes.roomTypes)
 					.filter((roomType) => roomType[1].includeInRoomSearch())
 					.map((roomType) => roomType[0]);
-<<<<<<< HEAD
 				const roomIds = RocketChat.models.Subscriptions.findByUserIdAndTypes(userId, searchableRoomTypes, { fields: { rid: 1 } }).fetch().map((s) => s.rid);
 				result.rooms = fetchRooms(userId, RocketChat.models.Rooms.findByNameAndTypesNotInIds(regex, searchableRoomTypes, roomIds, roomOptions).fetch());
 				const roomPIds = RocketChat.models.Subscriptions.findByUserIdAndTypes(userId, ['p'], { fields: { rid: 1 } }).fetch().map((s) => s.rid);
@@ -239,11 +238,6 @@ Meteor.methods({
 				for (let i = 0; i < roomsP.length; i++) {
 					result.rooms.push(roomsP[i]);
 				}
-=======
-
-				const roomIds = Subscriptions.findByUserIdAndTypes(userId, searchableRoomTypes, { fields: { rid: 1 } }).fetch().map((s) => s.rid);
-				result.rooms = fetchRooms(userId, Rooms.findByNameAndTypesNotInIds(regex, searchableRoomTypes, roomIds, roomOptions).fetch());
->>>>>>> upstream/develop
 			}
 		} else if (type.users === true && rid) {
 			const subscriptions = Subscriptions.find({
