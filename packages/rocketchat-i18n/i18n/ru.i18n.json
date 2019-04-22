@@ -1492,12 +1492,9 @@
   "Importer_Source_File": "Выбор исходного файла",
   "Importer_Upload_FileSize_Message": "Настройки вашего сервера позволяют загружать файлы любого размера до __maxFileSize__.",
   "Importer_Upload_Unlimited_FileSize": "Настройки вашего сервера позволяют загружать файлы любого размера.",
-<<<<<<< HEAD
-=======
   "Importing_channels": "Импорт каналов",
   "Importing_messages": "Импорт сообщений",
   "Importing_users": "Импорт пользователей",
->>>>>>> upstream/develop
   "Inclusive": "Включительно",
   "Incoming_Livechats": "Входящие Livechat",
   "Incoming_WebHook": "Входящий webhook",

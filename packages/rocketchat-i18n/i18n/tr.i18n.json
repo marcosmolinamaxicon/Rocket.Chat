@@ -2091,16 +2091,10 @@
   "No_results_found": "Sonuç bulunamadı",
   "No_results_found_for": "Için sonuç bulunamadı:",
   "No_snippet_messages": "Snippet yok",
-<<<<<<< HEAD
-  "No_starred_messages": "Favori iletin yok",
-  "No_such_command": "Böyle bir komut yok: `/__command__`",
-  "No_user_with_username_%s_was_found": "<strong>\" %s\"</strong> adında hiçbir kullanıcı bulunamadı!",
-=======
   "No_starred_messages": "Favori ileti yok",
   "No_such_command": "Böyle bir komut yok: `/__command__`",
   "No_discussions_yet": "Henüz tartışma yok",
   "No_user_with_username_%s_was_found": "<strong>\"%s\"</strong> adında hiçbir kullanıcı bulunamadı!",
->>>>>>> upstream/develop
   "Nobody_available": "Kimse yok",
   "Node_version": "düğüm versiyonu",
   "None": "Hiçbiri",
