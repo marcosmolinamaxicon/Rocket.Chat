@@ -485,7 +485,7 @@ export class Users extends Base {
 
 		const termRegex = new RegExp(s.escapeRegExp(searchTerm), 'i');
 
-		const orStmt = _.reduce(RocketChat.settings.get('Accounts_SearchFields').trim().split(','), function(acc, el) {
+		const orStmt = _.reduce(settings.get('Accounts_SearchFields').trim().split(','), function(acc, el) {
 			acc.push({ [el.trim()]: termRegex });
 			return acc;
 		}, []);

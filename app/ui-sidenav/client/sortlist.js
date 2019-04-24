@@ -1,8 +1,11 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
-import { popover } from '../../ui-utils';
-import { getUserPreference } from '../../utils';
+import { popover, modal, call } from '../../ui-utils';
+import { getUserPreference, t } from '../../utils';
 import { settings } from '../../settings';
+import { ChatSubscription } from '../../models';
+import { Session } from 'meteor/session';
+
 
 const checked = function(prop, field) {
 	const userId = Meteor.userId();
@@ -12,11 +15,11 @@ const checked = function(prop, field) {
 	}
 	//	TODO Maxicon
 	if (prop === 'sidebarGroupByRole') {
-		return RocketChat.getUserPreference(userId, 'sidebarGroupByRole');
+		return getUserPreference(userId, 'sidebarGroupByRole');
 	}
 	//	TODO Maxicon
 	if (prop === 'sidebarFindOnline') {
-		return RocketChat.getUserPreference(userId, 'sidebarFindOnline');
+		return getUserPreference(userId, 'sidebarFindOnline');
 	}
 	if (prop === 'sidebarShowFavorites') {
 		return getUserPreference(userId, 'sidebarShowFavorites');
