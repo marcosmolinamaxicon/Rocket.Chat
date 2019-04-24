@@ -124,6 +124,7 @@ Template.roomList.helpers({
 					query.f = { $ne: favoritesEnabled };
 				}
 			}
+			//TODO Maxicon
 			const chats = ChatSubscription.find(query, { sort }).fetch();
 			Session.set('rooms', chats);
 			return chats;
