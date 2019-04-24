@@ -380,6 +380,14 @@ Template.message.helpers({
 		const { msg } = this;
 		return msg.actionContext === 'snippeted';
 	},
+	// TODO Maxicon
+	ccsUserLogged(user) {
+		return Meteor.user().username === user ? 'color: red' : 'color: blue';
+	},
+	// TODO Maxicon
+	ccsSkype() {
+		return Meteor.user().settings.preferences.viewCssSkype;
+	},
 	isThreadReply() {
 		const { msg: { tmid }, settings: { showreply } } = this;
 		return !!(tmid && showreply);
