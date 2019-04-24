@@ -3,14 +3,14 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import { Blaze } from 'meteor/blaze';
 import { Session } from 'meteor/session';
 import { Template } from 'meteor/templating';
-import { RocketChat, handleError } from 'meteor/rocketchat:lib';
-import { ChatRoom } from 'meteor/rocketchat:ui';
-import { t, isEmail } from 'meteor/rocketchat:utils';
+import { ChatRoom } from '../../../models';
+import { t, isEmail, handleError, roomTypes } from '../../../utils';
 import toastr from 'toastr';
+import { settings } from '../../../settings';
 import resetSelection from '../resetSelection';
 
 const filterNames = (old) => {
-	const reg = new RegExp(`^${ RocketChat.settings.get('UTF8_Names_Validation') }$`);
+	const reg = new RegExp(`^${ settings.get('UTF8_Names_Validation') }$`);
 	return [...old.replace(' ', '').toLocaleLowerCase()].filter((f) => reg.test(f)).join('');
 };
 
@@ -99,7 +99,7 @@ Template.openSolicInstructions.helpers({
 	},
 	roomName() {
 		const room = ChatRoom.findOne(Session.get('openedRoom'));
-		return room && RocketChat.roomTypes.getRoomName(room.t, room);
+		return room && roomTypes.getRoomName(room.t, room);
 	},
 	erroredEmails() {
 		const instance = Template.instance();
