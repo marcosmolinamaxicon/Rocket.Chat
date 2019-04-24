@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { DDPRateLimiter } from 'meteor/ddp-rate-limiter';
 import { hasPermission } from '../../app/authorization';
-import { Users, Subscriptions, Rooms } from '../../app/models';
+import { Users, Subscriptions, Rooms, Roles, Messages, Solics } from '../../app/models';
 import { settings } from '../../app/settings';
 import { roomTypes } from '../../app/utils';
 import s from 'underscore.string';
@@ -33,16 +33,16 @@ Meteor.methods({
 			});
 		}
 		const clienteId = data.rid.replace(Meteor.user()._id, '');
-		const client = RocketChat.models.Users.find({ _id: clienteId }, { fields: { emails: 1, roles : 1 } }).fetch();
+		const client = Users.find({ _id: clienteId }, { fields: { emails: 1, roles : 1 } }).fetch();
 		let empresa = null;
 		console.log(client[0].roles);
 		for (let i = 0; i < client[0].roles.length; i++) {
-			empresa = RocketChat.models.Roles.find({ _id: client[0].roles[i] }).fetch();
+			empresa = Roles.find({ _id: client[0].roles[i] }).fetch();
 		}
 		let times = [];
 		let strMsgProblema = '';
 		for (let i = 0; i < data.messagesProblema.length; i++) {
-			const msgs = RocketChat.models.Messages.find({ _id: data.messagesProblema[i] }, { fields: { msg: 1, ts: 1 } }).fetch();
+			const msgs = Messages.find({ _id: data.messagesProblema[i] }, { fields: { msg: 1, ts: 1 } }).fetch();
 			strMsgProblema += msgs[0].msg;
 			times.push(msgs[0].ts);
 			strMsgProblema += ' \n';
@@ -50,7 +50,7 @@ Meteor.methods({
 
 		let strMsgSolucao = '';
 		for (let i = 0; i < data.messagesSolucao.length; i++) {
-			const msgs = RocketChat.models.Messages.find({ _id: data.messagesSolucao[i] }, { fields: { msg: 1, ts: 1 } }).fetch();
+			const msgs = Messages.find({ _id: data.messagesSolucao[i] }, { fields: { msg: 1, ts: 1 } }).fetch();
 			strMsgSolucao += msgs[0].msg;
 			times.push(msgs[0].ts);
 			strMsgSolucao += ' \n';
@@ -81,7 +81,7 @@ Meteor.methods({
 				method: 'openSolic',
 			});
 		}
-		if (!RocketChat.authz.hasPermission(userId, 'open-solic')) {
+		if (!hasPermission(userId, 'open-solic')) {
 			throw new Meteor.Error('error-action-not-allowed', 'Sem permissão para abrir solicitação', {
 				method: 'openSolic',
 				action: 'openSolic',
@@ -89,10 +89,10 @@ Meteor.methods({
 		}
 
 		data.userId = userId;
-		return RocketChat.models.Solics.createOrUpdate(data);
+		return Solics.createOrUpdate(data);
 	},
 	'getUserRoom'(name) {
-		return RocketChat.models.Users.findByUsername(name, { fields: { roles : 1 } }).fetch();
+		return Users.findByUsername(name, { fields: { roles : 1 } }).fetch();
 	},
 	/*	TODO Maxicon */
 	loadroomlist(chats) {
@@ -101,7 +101,7 @@ Meteor.methods({
 		for (let i = 0; i < chats.length; i++) {
 			if (chats[i].name) {
 				let usr = {};
-				const usrs = RocketChat.models.Users.findByUsername(chats[i].name, { fields: { roles : 1 } }).fetch();
+				const usrs = Users.findByUsername(chats[i].name, { fields: { roles : 1 } }).fetch();
 				if (usrs && usrs[0]) {
 					usr = usrs[0];
 				}
@@ -171,7 +171,7 @@ Meteor.methods({
 			rooms: [],
 		};
 		const roomOptions = {
-			limit: 5,
+			limit: 100,
 			fields: {
 				t: 1,
 				name: 1,
@@ -190,11 +190,12 @@ Meteor.methods({
 			return result;
 		}
 		const userOptions = {
-			limit: 5,
+			limit: 300,
 			fields: {
 				username: 1,
 				name: 1,
 				status: 1,
+				roles: 1, //  TODO Maxicon
 			},
 			sort: {},
 		};
@@ -205,10 +206,10 @@ Meteor.methods({
 		}
 
 		//	TODO Maxicon
-		if (RocketChat.authz.hasPermission(userId, 'view-only-group')
-			&& !RocketChat.authz.hasPermission(userId, 'view-outside-room')) {
-			const user = RocketChat.models.Users.find({ _id: userId }).fetch();
-			const roles = RocketChat.models.Roles.find({ public: true }).fetch();
+		if (hasPermission(userId, 'view-only-group')
+			&& !hasPermission(userId, 'view-outside-room')) {
+			const user = Users.find({ _id: userId }).fetch();
+			const roles = Roles.find({ public: true }).fetch();
 			const sRoles = user[0].roles;
 			if (roles) {
 				for (let r = 0; r < roles.length; r++) {
@@ -217,7 +218,7 @@ Meteor.methods({
 			}
 			roles.push(user[0].roles[0]);
 
-			result.users = RocketChat.models.Users.findByActiveUsersGroupExcept(text, user[0].roles, usernames, userOptions).fetch();
+			result.users = Users.findByActiveUsersGroupExcept(text, user[0].roles, usernames, userOptions).fetch();
 			return result;
 		}
 

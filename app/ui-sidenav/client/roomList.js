@@ -4,16 +4,17 @@ import { Template } from 'meteor/templating';
 import { ChatSubscription, Rooms, Users, Subscriptions } from '../../models';
 import { UiTextContext, getUserPreference, roomTypes } from '../../utils';
 import { settings } from '../../settings';
+import { Session } from 'meteor/session';
 
 /*	TODO Maxicon */
-const getRooms = function (chats, callback) {
+const getRooms = function(chats, callback) {
 	Meteor.call('loadroomlist', chats, (err, results) => {
 		callback(results);
 	});
 };
 /*	TODO Maxicon */
 Template.roomList.onCreated(function OnCreated() {
-	const user = RocketChat.models.Users.findOne(Meteor.userId(), {
+	const user = Users.findOne(Meteor.userId(), {
 		fields: {
 			'settings.preferences.sidebarSortby': 1,
 			'settings.preferences.sidebarShowFavorites': 1,
@@ -22,7 +23,7 @@ Template.roomList.onCreated(function OnCreated() {
 			'services.tokenpass': 1,
 		},
 	});
-	if (RocketChat.getUserPreference(user, 'sidebarGroupByRole')) {
+	if (getUserPreference(user, 'sidebarGroupByRole')) {
 		const chats = ChatSubscription.find({ open: true }).fetch();
 		Meteor.call('loadroomlist', chats, (err, results) => {
 			Session.set('rooms', results);
@@ -78,9 +79,9 @@ Template.roomList.helpers({
 			sort[this.identifier === 'd' && settings.get('UI_Use_Real_Name') ? 'lowerCaseFName' : 'lowerCaseName'] = /descending/.test(sortBy) ? -1 : 1;
 		}
 		/*	TODO Maxicon */
-		if (RocketChat.getUserPreference(user, 'sidebarGroupByRole')) {
+		if (getUserPreference(user, 'sidebarGroupByRole')) {
 			const chats = ChatSubscription.find({ open: true }, { sort }).fetch();
-			getRooms(chats, function (data) {
+			getRooms(chats, function(data) {
 				Session.set('rooms', data);
 			});
 			return chats;
@@ -142,7 +143,7 @@ Template.roomList.helpers({
 					query.f = { $ne: favoritesEnabled };
 				}
 			}
-			//TODO Maxicon
+			//  TODO Maxicon
 			const chats = ChatSubscription.find(query, { sort }).fetch();
 			Session.set('rooms', chats);
 			return chats;
@@ -165,7 +166,7 @@ Template.roomList.helpers({
 
 	roomType(room) {
 		if (room.header || room.identifier) {
-			return `type-${room.header || room.identifier}`;
+			return `type-${ room.header || room.identifier }`;
 		}
 	},
 
@@ -205,13 +206,13 @@ const mergeRoomSub = (room) => {
 	Subscriptions.update({
 		rid: room._id,
 	}, {
-			$set: {
-				lastMessage: room.lastMessage,
-				lm: room._updatedAt,
-				streamingOptions: room.streamingOptions,
-				...getLowerCaseNames(room, sub.name, sub.fname),
-			},
-		});
+		$set: {
+			lastMessage: room.lastMessage,
+			lm: room._updatedAt,
+			streamingOptions: room.streamingOptions,
+			...getLowerCaseNames(room, sub.name, sub.fname),
+		},
+	});
 
 	return room;
 };
