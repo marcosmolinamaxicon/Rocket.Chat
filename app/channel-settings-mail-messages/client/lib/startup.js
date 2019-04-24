@@ -23,7 +23,7 @@ Meteor.startup(() => {
 		icon: 'mail',
 		template: 'openSolicInstructions',
 		order: 10,
-		condition: () => RocketChat.authz.hasAllPermission('open-solic'),
+		condition: () => hasAllPermission('open-solic'),
 	});
 
 	// RocketChat.callbacks.add('roomExit', () => resetSelection(false), RocketChat.callbacks.priority.MEDIUM, 'room-exit-mail-messages');
