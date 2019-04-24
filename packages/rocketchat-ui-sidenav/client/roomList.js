@@ -61,7 +61,7 @@ Template.roomList.helpers({
 				'settings.preferences.sidebarSortby': 1,
 				'settings.preferences.sidebarShowFavorites': 1,
 				'settings.preferences.sidebarShowUnread': 1,
-				'settings.preferences.sidebarGroupByRole': 1,
+				'settings.preferences.sidebarGroupByRole': 1, // TODO Maxicon
 				'services.tokenpass': 1,
 			},
 		});
