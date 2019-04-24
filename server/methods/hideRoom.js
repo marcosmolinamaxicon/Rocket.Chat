@@ -13,7 +13,7 @@ Meteor.methods({
 					method: 'hideRoom',
 				});
 			}
-			RocketChat.models.Subscriptions.hideByRoomIdAndUserId(rids[i], Meteor.userId());
+			Subscriptions.hideByRoomIdAndUserId(rids[i], Meteor.userId());
 
 		}
 		return;

@@ -1,5 +1,6 @@
 import { Template } from 'meteor/templating';
 import { TabBar, fireGlobalEvent } from '../../../../ui-utils';
+import { Meteor } from 'meteor/meteor';
 
 Template.header.helpers({
 	back() {
@@ -16,7 +17,7 @@ Template.header.events({
 		e.currentTarget.querySelector('button').blur();
 		return false;
 	},
-	//TODO Naxicon 
+	//   TODO Maxicon
 	'click .rc-header__alterCss'() {
 		Meteor.call('saveUserPreferences', {
 			viewCssSkype : !Meteor.user().settings.preferences.viewCssSkype,

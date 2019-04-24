@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 import { Base } from './_Base';
 
 export class Solics extends Base {
@@ -6,7 +7,7 @@ export class Solics extends Base {
 		this.tryEnsureIndex({ rid: 1 });
 		this.tryEnsureIndex({ userId: 1 });
 	}
-    createOrUpdate(data) {
+	createOrUpdate(data) {
 		return this.insert(data);
 	}
 }
