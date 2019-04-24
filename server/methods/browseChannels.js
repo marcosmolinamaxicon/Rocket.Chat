@@ -87,10 +87,10 @@ Meteor.methods({
 
 		//	TODO Maxicon
 		const sort = sortUsers(sortBy, sortDirection);
-		if (RocketChat.authz.hasPermission(user._id, 'view-only-group')) {
+		if (hasPermission(user._id, 'view-only-group')) {
 			return {
-				results: RocketChat.models.Users.findByActiveUsersGroupExcept(text, [user.username], {
-					...options,
+				results: Users.findByActiveUsersGroupExcept(text, [user.username], {
+					...pagination,
 					sort,
 					fields: {
 						username: 1,
@@ -99,7 +99,7 @@ Meteor.methods({
 						emails: 1,
 					},
 				}).fetch(),
-				total: RocketChat.models.Users.findByActiveUsersGroupExcept(text, [user.username]).count(),
+				total: Users.findByActiveUsersGroupExcept(text, [user.username]).count(),
 			};
 		}
 
