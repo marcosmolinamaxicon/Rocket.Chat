@@ -15,7 +15,7 @@ Meteor.startup(() => {
 		condition: () => hasAllPermission('mail-messages'),
 	});
 	//  TODO Maxicon
-	RocketChat.TabBar.addButton({
+	TabBar.addButton({
 		groups: ['direct'],
 		id: 'open-solic',
 		anonymous: true,
