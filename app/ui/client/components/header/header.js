@@ -1,6 +1,6 @@
 import { Template } from 'meteor/templating';
 import { TabBar, fireGlobalEvent } from '../../../../ui-utils';
-import { Meteor } from 'meteor/meteor';
+
 
 Template.header.helpers({
 	back() {
