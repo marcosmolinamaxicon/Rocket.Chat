@@ -139,7 +139,7 @@ Template.header.events({
 		return false;
 	},
 
-	//TODO Naxicon 
+	//  TODO Naxicon 
 	'click .rc-header__alterCss'() {
 		Meteor.call('saveUserPreferences', {
 			viewCssSkype : !Meteor.user().settings.preferences.viewCssSkype,
