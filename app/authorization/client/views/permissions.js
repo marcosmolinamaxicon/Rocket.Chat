@@ -5,6 +5,7 @@ import { Template } from 'meteor/templating';
 import { Roles } from '../../../models';
 import { ChatPermissions } from '../lib/ChatPermissions';
 import { hasAllPermission } from '../hasPermission';
+import { SideNav } from '../../../ui-utils/client/lib/SideNav';
 
 Template.permissions.helpers({
 	role() {
@@ -88,5 +89,12 @@ Template.permissions.onCreated(function() {
 				delete this.permissionByRole[id];
 			},
 		});
+	});
+});
+
+Template.permissions.onRendered(() => {
+	Tracker.afterFlush(() => {
+		SideNav.setFlex('adminFlex');
+		SideNav.openFlex();
 	});
 });
