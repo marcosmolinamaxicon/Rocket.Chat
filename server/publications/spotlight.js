@@ -234,6 +234,12 @@ Meteor.methods({
 
 				const roomIds = Subscriptions.findByUserIdAndTypes(userId, searchableRoomTypes, { fields: { rid: 1 } }).fetch().map((s) => s.rid);
 				result.rooms = fetchRooms(userId, Rooms.findByNameAndTypesNotInIds(regex, searchableRoomTypes, roomIds, roomOptions).fetch());
+				// TODO Maxicon
+				const roomPIds = Subscriptions.findByUserIdAndTypes(userId, ['p'], { fields: { rid: 1 } }).fetch().map((s) => s.rid);
+				const roomsP = fetchRooms(userId, Rooms.findByIds(roomPIds, roomOptions).fetch());
+				for (let i = 0; i < roomsP.length; i++) {
+					result.rooms.push(roomsP[i]);
+				}
 			}
 		} else if (type.users === true && rid) {
 			const subscriptions = Subscriptions.find({

@@ -17,11 +17,4 @@ Template.header.events({
 		e.currentTarget.querySelector('button').blur();
 		return false;
 	},
-	//   TODO Maxicon
-	'click .rc-header__alterCss'() {
-		Meteor.call('saveUserPreferences', {
-			viewCssSkype : !Meteor.user().settings.preferences.viewCssSkype,
-		});
-		location.reload();
-	},
 });

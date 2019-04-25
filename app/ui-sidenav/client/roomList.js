@@ -62,6 +62,7 @@ Template.roomList.helpers({
 				'settings.preferences.sidebarShowFavorites': 1,
 				'settings.preferences.sidebarShowUnread': 1,
 				'settings.preferences.sidebarShowDiscussion': 1,
+				'settings.preferences.sidebarGroupByRole': 1,
 				'services.tokenpass': 1,
 			},
 		});
