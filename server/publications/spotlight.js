@@ -174,7 +174,10 @@ Meteor.methods({
 			limit: 100,
 			fields: {
 				t: 1,
+				prid: 1,
 				name: 1,
+				fname: 1,
+				description: 1,
 				joinCodeRequired: 1,
 				lastMessage: 1,
 			},

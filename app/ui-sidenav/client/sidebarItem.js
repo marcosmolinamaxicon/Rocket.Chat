@@ -33,6 +33,12 @@ Template.sidebarItem.helpers({
 		return this.pathSection === 'livechat-queue';
 	},
 	// TODO maxicon
+	prid() {
+		if (this.prid) {
+			return true;
+		}
+		return false;
+	},
 	showGroup() {
 		return this.showGroup;
 	},
@@ -210,6 +216,7 @@ Template.sidebarItem.events({
 
 Template.sidebarItemIcon.helpers({
 	isRoom() {
+		console.log(this.prid);
 		return this.rid || this._id;
 	},
 	status() {

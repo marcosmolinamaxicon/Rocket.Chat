@@ -43,7 +43,10 @@ const getFromServer = (cb, type) => {
 				_id: results.rooms[i]._id,
 				t:  results.rooms[i].t,
 				name: results.rooms[i].name,
-				fname: results.rooms[i].name,
+				fname: results.rooms[i].fname ? results.rooms[i].fname : results.rooms[i].name,
+				description: results.rooms[i].description ? results.rooms[i].description : results.rooms[i].name,
+				icon: results.rooms[i].prid ? 'discussion' : null,
+				prid: results.rooms[i].prid,
 				roles: [],
 				role: undefined,
 			});
