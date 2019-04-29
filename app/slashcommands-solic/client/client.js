@@ -4,6 +4,7 @@ import { slashCommands } from '../../utils';
 
 function Solic(command, params /* , item*/) {
 	console.log('solic', command);
+	console.log('params', params);
 	if (command === 'solic') {
 		const msg = {};
 
