@@ -64,6 +64,7 @@ Template.roomList.helpers({
 				'settings.preferences.sidebarShowDiscussion': 1,
 				'settings.preferences.sidebarGroupByRole': 1,
 				'services.tokenpass': 1,
+				messageViewMode: 1,
 			},
 		});
 
