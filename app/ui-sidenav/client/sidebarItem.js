@@ -216,7 +216,6 @@ Template.sidebarItem.events({
 
 Template.sidebarItemIcon.helpers({
 	isRoom() {
-		console.log(this.prid);
 		return this.rid || this._id;
 	},
 	status() {
