@@ -20,7 +20,7 @@ WORKDIR /app/bundle
 ENV DEPLOY_METHOD=docker \
     NODE_ENV=production \
     MONGO_URL=mongodb://mongo1:27017/rocketchat?replSet=rs01 \
-    MONGO_OPLOG_URL=mongodb://mongo1:27017/local?replSet=rs01
+    MONGO_OPLOG_URL=mongodb://mongo1:27017/local?replSet=rs01 \
     HOME=/tmp \
     PORT=3000 \
     ROOT_URL=https://rchat.maxiconsystems.com.br \
