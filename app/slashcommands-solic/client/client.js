@@ -7,7 +7,7 @@ function Solic(command, params /* , item*/) {
 	if (command === 'solic') {
 		const msg = {};
 
-		msg.msg = params + '['+item+']'+'(https://sds.maxiconsystems.com.br/pls/maxicon/show_solic_v2?i_nr_solicitacao='+item+')';
+		//  msg.msg = params + '['+item+']'+'(https://sds.maxiconsystems.com.br/pls/maxicon/show_solic_v2?i_nr_solicitacao='+item+')';
 		console.log('solic', msg);
 		Meteor.call('sendMessage', msg);
 	}
