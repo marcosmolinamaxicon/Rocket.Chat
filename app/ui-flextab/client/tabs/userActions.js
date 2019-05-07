@@ -103,25 +103,6 @@ export const getActions = ({ user, directActions, hideAdminControls }) => {
 		},
 
 		function() {
-			if (!isDirect() || isSelf(this.username)) {
-				return;
-			}
-			if (isBlocker()) {
-				return {
-					icon : 'ban',
-					name:t('Unblock_User'),
-					action: prevent(getUser, ({ _id }) => Meteor.call('unblockUser', { rid: Session.get('openedRoom'), blocked: _id }, success(() => toastr.success(t('User_is_unblocked'))))),
-				};
-			}
-			return {
-				icon : 'ban',
-				name:t('Block_User'),
-				modifier: 'alert',
-				action: prevent(getUser, ({ _id }) => Meteor.call('blockUser', { rid: Session.get('openedRoom'), blocked: _id }, success(() => toastr.success(t('User_is_blocked'))))),
-			};
-		},
-
-		function() {
 			if (isSelf(this.username) || !directActions) {
 				return;
 			}
