@@ -19,6 +19,26 @@ function fetchRooms(userId, rooms) {
 
 Meteor.methods({
 	/*	TODO Maxicon */
+	'isBlockRoom'(rid, userId) {
+		return Subscriptions.findOneByRoomIdAndUserId(rid, userId);
+	},
+	'unBlock'(rId) {
+		const subs = Subscriptions.find({ rid: rId });
+		for (const s of subs) {
+			if (s.u._id !== Meteor.userId()) {
+				Meteor.call('unblockUser', { rid: rId, blocked: s.u._id }, (error, success) => {
+					if (error) {
+						throw new Meteor.Error('erro ao desbloquear', error, {
+							method: 'unBlock',
+						});
+					}
+					if (success) {
+						return true;
+					}
+				});
+			}
+		}
+	},
 	'openSolic2'(data) {
 		const userId = Meteor.userId();
 		if (!userId) {
@@ -35,7 +55,6 @@ Meteor.methods({
 		const clienteId = data.rid.replace(Meteor.user()._id, '');
 		const client = Users.find({ _id: clienteId }, { fields: { emails: 1, roles : 1 } }).fetch();
 		let empresa = null;
-		console.log(client[0].roles);
 		for (let i = 0; i < client[0].roles.length; i++) {
 			empresa = Roles.find({ _id: client[0].roles[i] }).fetch();
 		}

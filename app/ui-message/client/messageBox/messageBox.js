@@ -6,7 +6,9 @@ import { Template } from 'meteor/templating';
 import { Tracker } from 'meteor/tracker';
 import { EmojiPicker } from '../../../emoji';
 import { Users } from '../../../models';
+import toastr from 'toastr';
 import { settings } from '../../../settings';
+
 import {
 	fileUpload,
 	KonchatNotification,
@@ -36,6 +38,7 @@ import './messageBoxAudioMessage';
 import './messageBoxNotSubscribed';
 import './messageBox.html';
 import './messageBoxReadOnly';
+import { ChatSubscription } from '../../../models/client';
 
 Template.messageBox.onCreated(function() {
 	this.state = new ReactiveDict();
@@ -105,8 +108,24 @@ Template.messageBox.onRendered(function() {
 		this.replyMessageData.set(messages);
 	});
 	this.autorun(() => {
+		console.log('onRenderede');
 		const { rid, subscription } = Template.currentData();
 		const room = Session.get(`roomData${ rid }`);
+		// TODO Maxicon
+		Meteor.call('isBlockRoom', rid, Meteor.userId(), (err, result) => {
+			if (err) {
+				this.state.set({ isBlockedOrBlocker: true });
+			} else {
+				if (result && result.blocked) {
+					this.state.set({ isBlockedOrBlocker: true });
+					this.state.set({ isBlocked: true });
+				}
+				if (result && result.blocker) {
+					this.state.set({ isBlockedOrBlocker: true });
+					this.state.set({ isBlocker: true });
+				}
+			}
+		});
 
 		if (!room) {
 			return this.state.set({
@@ -185,6 +204,7 @@ Template.messageBox.helpers({
 		return isAnonymous || instance.state.get('mustJoinWithCode');
 	},
 	isWritable() {
+		console.log('isWritable');
 		const { rid, subscription } = Template.currentData();
 		if (!rid) {
 			return true;
@@ -238,6 +258,11 @@ Template.messageBox.helpers({
 	isBlockedOrBlocker() {
 		return Template.instance().state.get('isBlockedOrBlocker');
 	},
+	//  TODO Maxicon
+	isBlocker() {
+		return Template.instance().state.get('isBlocker');
+	},
+
 });
 
 const handleFormattingShortcut = (event, instance) => {
@@ -472,5 +497,30 @@ Template.messageBox.events({
 		}
 
 		applyFormatting(pattern, instance.input);
+	},
+	// TODO Maxicon
+	async 'click .js-unblock'() {
+		console.log(Session.get('openedRoom'));
+		Meteor.call('unBlock', Session.get('openedRoom'), (error, success) => {
+			if (error) {
+				toastr.error(error);
+			}
+			if (success) {
+				toastr.success(t('User_is_unblocked'));
+			}
+		});
+		/*const subs = ChatSubscription.find({ rid: Session.get('openedRoom') });
+		for (const s of subs) {
+			if (s.u._id !== Meteor.userId()) {
+				Meteor.call('unblockUser', { rid: Session.get('openedRoom'), blocked: s.u._id }, (error, success) => {
+					if (error) {
+						toastr.error(error);
+					}
+					if (success) {
+						toastr.success(t('User_is_unblocked'));
+					}
+				});
+			}
+		}*/
 	},
 });
