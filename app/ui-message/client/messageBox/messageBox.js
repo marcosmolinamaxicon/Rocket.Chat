@@ -38,7 +38,6 @@ import './messageBoxAudioMessage';
 import './messageBoxNotSubscribed';
 import './messageBox.html';
 import './messageBoxReadOnly';
-import { ChatSubscription } from '../../../models/client';
 
 Template.messageBox.onCreated(function() {
 	this.state = new ReactiveDict();
@@ -500,7 +499,6 @@ Template.messageBox.events({
 	},
 	// TODO Maxicon
 	async 'click .js-unblock'() {
-		console.log(Session.get('openedRoom'));
 		Meteor.call('unBlock', Session.get('openedRoom'), (error, success) => {
 			if (error) {
 				toastr.error(error);
@@ -509,18 +507,5 @@ Template.messageBox.events({
 				toastr.success(t('User_is_unblocked'));
 			}
 		});
-		/*const subs = ChatSubscription.find({ rid: Session.get('openedRoom') });
-		for (const s of subs) {
-			if (s.u._id !== Meteor.userId()) {
-				Meteor.call('unblockUser', { rid: Session.get('openedRoom'), blocked: s.u._id }, (error, success) => {
-					if (error) {
-						toastr.error(error);
-					}
-					if (success) {
-						toastr.success(t('User_is_unblocked'));
-					}
-				});
-			}
-		}*/
 	},
 });
