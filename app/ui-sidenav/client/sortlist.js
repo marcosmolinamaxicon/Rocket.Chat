@@ -1,7 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
-import { popover, modal, call } from '../../ui-utils';
-import { getUserPreference, t } from '../../utils';
+
+import { popover } from '../../ui-utils';
+import { getUserPreference } from '../../utils';
 import { settings } from '../../settings';
 import { ChatSubscription } from '../../models';
 import { Session } from 'meteor/session';
@@ -119,7 +120,7 @@ Template.sortlist.events({
 			value = !value;
 		}
 		Meteor.call('saveUserPreferences', {
-			[name] : value,
+			[name]: value,
 		});
 		// TODO Maxicon
 		if (name === 'sidebarSortby') {
