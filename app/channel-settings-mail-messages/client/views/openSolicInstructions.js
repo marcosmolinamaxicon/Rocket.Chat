@@ -3,9 +3,10 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import { Blaze } from 'meteor/blaze';
 import { Session } from 'meteor/session';
 import { Template } from 'meteor/templating';
+import toastr from 'toastr';
+
 import { ChatRoom } from '../../../models';
 import { t, isEmail, handleError, roomTypes } from '../../../utils';
-import toastr from 'toastr';
 import { settings } from '../../../settings';
 import resetSelection from '../resetSelection';
 
@@ -162,13 +163,11 @@ Template.openSolicInstructions.events({
 		const data = {
 			rid: Session.get('openedRoom'),
 			userId: Meteor.user()._id,
-			assunto:  subject,
-			messagesProblema : selectedProblema.get(),
-			messagesSolucao : selectedSolucao.get(),
+			assunto: subject,
+			messagesProblema: selectedProblema.get(),
+			messagesSolucao: selectedSolucao.get(),
 			language: localStorage.getItem('userLanguage'),
 		};
-
-
 
 		Meteor.call('openSolic2', data, function(err, result) {
 			if (err != null) {
@@ -291,9 +290,6 @@ Template.openSolicInstructions.onCreated(function() {
 	this.errorMessage = new ReactiveVar('');
 	this.selectedUsers = new ReactiveVar([]);
 	this.userFilter = new ReactiveVar('');
-
-
-
 
 	this.reset = (bool) => {
 		console.log('reset');
