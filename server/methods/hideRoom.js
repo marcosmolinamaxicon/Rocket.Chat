@@ -15,9 +15,7 @@ Meteor.methods({
 				});
 			}
 			Subscriptions.hideByRoomIdAndUserId(rids[i], Meteor.userId());
-
 		}
-		return;
 	},
 	hideRoom(rid) {
 		check(rid, String);
