@@ -5,6 +5,7 @@ import { Session } from 'meteor/session';
 import { Template } from 'meteor/templating';
 import { Tracker } from 'meteor/tracker';
 import moment from 'moment';
+import toastr from 'toastr';
 
 import { setupAutogrow } from './messageBoxAutogrow';
 import {
@@ -13,9 +14,7 @@ import {
 } from './messageBoxFormatting';
 import { EmojiPicker } from '../../../emoji';
 import { Users } from '../../../models';
-import toastr from 'toastr';
 import { settings } from '../../../settings';
-
 import {
 	fileUpload,
 	KonchatNotification,
