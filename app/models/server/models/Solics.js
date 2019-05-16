@@ -7,6 +7,7 @@ export class Solics extends Base {
 		this.tryEnsureIndex({ rid: 1 });
 		this.tryEnsureIndex({ userId: 1 });
 	}
+
 	createOrUpdate(data) {
 		return this.insert(data);
 	}

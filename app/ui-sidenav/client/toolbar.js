@@ -42,7 +42,7 @@ const getFromServer = (cb, type) => {
 		for (let i = 0; i < roomsLength; i++) {
 			resultsFromServer.push({
 				_id: results.rooms[i]._id,
-				t:  results.rooms[i].t,
+				t: results.rooms[i].t,
 				name: results.rooms[i].name,
 				fname: results.rooms[i].fname ? results.rooms[i].fname : results.rooms[i].name,
 				description: results.rooms[i].description ? results.rooms[i].description : results.rooms[i].name,
@@ -51,7 +51,6 @@ const getFromServer = (cb, type) => {
 				roles: [],
 				role: undefined,
 			});
-
 		}
 		if (usersLength) {
 			const roles = [];
@@ -111,7 +110,7 @@ const getFromServer = (cb, type) => {
 					t: results.rooms[i].t,
 					name: results.rooms[i].name,
 					lastMessage: results.rooms[i].lastMessage,
-					roles : [],
+					roles: [],
 					role: '',
 					showGroup: false,
 				});

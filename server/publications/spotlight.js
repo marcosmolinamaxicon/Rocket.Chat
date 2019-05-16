@@ -54,7 +54,7 @@ Meteor.methods({
 			});
 		}
 		const clienteId = data.rid.replace(Meteor.user()._id, '');
-		const client = Users.find({ _id: clienteId }, { fields: { emails: 1, roles : 1 } }).fetch();
+		const client = Users.find({ _id: clienteId }, { fields: { emails: 1, roles: 1 } }).fetch();
 		let empresa = null;
 		for (let i = 0; i < client[0].roles.length; i++) {
 			empresa = Roles.find({ _id: client[0].roles[i] }).fetch();
@@ -112,7 +112,7 @@ Meteor.methods({
 		return Solics.createOrUpdate(data);
 	},
 	'getUserRoom'(name) {
-		return Users.findByUsername(name, { fields: { roles : 1 } }).fetch();
+		return Users.findByUsername(name, { fields: { roles: 1 } }).fetch();
 	},
 	/*	TODO Maxicon */
 	loadroomlist(chats) {
@@ -121,7 +121,7 @@ Meteor.methods({
 		for (let i = 0; i < chats.length; i++) {
 			if (chats[i].name) {
 				let usr = {};
-				const usrs = Users.findByUsername(chats[i].name, { fields: { roles : 1 } }).fetch();
+				const usrs = Users.findByUsername(chats[i].name, { fields: { roles: 1 } }).fetch();
 				if (usrs && usrs[0]) {
 					usr = usrs[0];
 				}

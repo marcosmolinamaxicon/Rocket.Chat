@@ -1,5 +1,6 @@
 //  TODO Maxicon
 import { Meteor } from 'meteor/meteor';
+
 import { slashCommands } from '../../utils';
 
 function Solic(command, params, item) {
@@ -35,4 +36,3 @@ slashCommands.add('osolic', OSolic, {
 	params: 'solcitação',
 	clientOnly: true,
 });
-

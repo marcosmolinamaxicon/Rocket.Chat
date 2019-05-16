@@ -1,11 +1,11 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
+import { Session } from 'meteor/session';
 
-import { popover } from '../../ui-utils';
-import { getUserPreference } from '../../utils';
+import { popover, call, modal } from '../../ui-utils';
+import { getUserPreference, t } from '../../utils';
 import { settings } from '../../settings';
 import { ChatSubscription } from '../../models';
-import { Session } from 'meteor/session';
 
 
 const checked = function(prop, field) {
@@ -65,7 +65,7 @@ Template.sortlist.events({
 			}, async function() {
 				const data = new Date();
 				data.setHours(0, 0, 0);
-				const chats = ChatSubscription.find({ open: true, ls : { $lt: data } }, {}).fetch();
+				const chats = ChatSubscription.find({ open: true, ls: { $lt: data } }, {}).fetch();
 				const rids = [];
 				for (let i = 0; i < chats.length; i++) {
 					rids.push(chats[i].rid);
@@ -111,7 +111,7 @@ Template.sortlist.events({
 		//	TODO Maxicon
 		if (name === 'sidebarFindOnline') {
 			Meteor.call('saveUserPreferences', {
-				[name] : value,
+				[name]: value,
 			});
 			return;
 		}
@@ -126,13 +126,15 @@ Template.sortlist.events({
 		if (name === 'sidebarSortby') {
 			popover.close();
 			return;
-		} else if (name !== 'sidebarGroupByRole' && value) {
+		}
+		if (name !== 'sidebarGroupByRole' && value) {
 			Meteor.call('saveUserPreferences', {
-				sidebarGroupByRole : false,
+				sidebarGroupByRole: false,
 			});
-		} else if (name === 'sidebarGroupByRole' && value) {
+		}
+		if (name === 'sidebarGroupByRole' && value) {
 			Meteor.call('saveUserPreferences', {
-				sidebarGroupByType : false,
+				sidebarGroupByType: false,
 				sidebarShowFavorites: false,
 				sidebarShowUnread: false,
 				sidebarShowDiscussion: false,

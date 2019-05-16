@@ -65,7 +65,7 @@ Template.permissions.onCreated(function() {
 	Tracker.autorun(() => {
 		const roles = Roles.find().fetch();
 		//  TODO Maxicon
-		roles.sort (function(a, b) {
+		roles.sort(function(a, b) {
 			if (a._id.toUpperCase() < b._id.toUpperCase()) {
 				return -1;
 			}
